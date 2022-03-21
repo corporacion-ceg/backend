@@ -23,7 +23,7 @@ app.use(express.json());
 const PORT = process.env.PORT || 9000;
 
 app.use(cors());
-
+app.use(express.static(path.join(__dirname, 'dbimages/')))
 //API REST
 
 app.get('/productos',(req,res) => {
@@ -159,10 +159,17 @@ app.get('/usuarios/:id', (req, res) => {
     const sql = "SELECT * FROM usuarios WHERE id = ?"
     db.query(sql, [ID], (err, data) => {
         if (err) {
+           
             return err;
         }
 
-        res.json(data);
+        fs.writeFileSync(path.join(__dirname, '/dbimages/'+ID+'planetadulce.png'), data[0].imagen)
+        
+
+       res.json({
+           data,
+           imagen:ID+'planetadulce.png' 
+    });
     })
 
 })
