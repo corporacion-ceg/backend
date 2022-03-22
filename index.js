@@ -204,6 +204,18 @@ app.get('/tiponegocios/', (req, res) => {
 
     
 });
+app.get('/marcas/', (req, res) => {
+
+    db.query("SELECT * FROM marcas", (err, data) => {
+        if (err) {
+            return err;
+        }
+
+        res.json({marcas:data});
+    })
+
+
+});
 app.get('/cuadrantes/', (req, res) => {
 
     db.query("SELECT * FROM cuadrantes", (err, data) => {
