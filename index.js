@@ -38,10 +38,11 @@ app.get('/productos',(req,res) => {
         }
 
         data.map(img => {
-            // fs.writeFileSync(path.join(__dirname, '/imagenes/'))
+           
             fs.writeFileSync(path.join(__dirname, '/imgprod/' + img.id + 'prod-planetadulce.png'), img.img)
+            // data.push(...{ imagen: img.id + 'prod-planetadulce.png'});
         })
-
+        console.log(data)
         res.json({productos: data,});
     })
 
