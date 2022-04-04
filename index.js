@@ -50,7 +50,7 @@ app.get('/productos',(req,res) => {
 app.get('/productos/:id', (req, res) => {
     console.log(req.params.id);
     const ID = req.params.id;
-    const sql = "SELECT * FROM productos WHERE id = ?"
+    const sql = "SELECT * FROM vista_productos WHERE id = ?"
     db.query(sql,[ID], (err, data) => {
         if (err) {
             return err;
@@ -228,12 +228,30 @@ app.get('/marcas/', (req, res) => {
         if (err) {
             return err;
         }
-
+        data.map(img => {
+           
+            fs.writeFileSync(path.join(__dirname, '/imgprod/' + img.id + 'marcas-planetadulce.png'), img.img)
+            // data.push(...{ imagen: img.id + 'prod-planetadulce.png'});
+        })
         res.json({marcas:data});
     })
 
 
 });
+app.get('/marcas/:id', (req, res) => {
+    console.log(req.params.id);
+    const ID = req.params.id;
+    const sql = "SELECT * FROM vista_productosm WHERE marcaid = ?"
+    db.query(sql, [ID], (err, data) => {
+        if (err) {
+            return err;
+        }
+
+
+        res.json({ productos: data });
+    })
+
+})
 app.get('/cuadrantes/', (req, res) => {
 
     db.query("SELECT * FROM cuadrantes", (err, data) => {
