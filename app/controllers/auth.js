@@ -82,7 +82,7 @@ const register = async (req, res) => {
 
         var usuario;
 
-        conexion.query('INSERT INTO usuarios SET ?', { nombre: name, email: email, direccion: direccion, tlf: tlf, cuandrante: 1, pass: passHash, codigo_aprobacion: codigo, user: user, aprobado: 0 },
+        conexion.query('INSERT INTO usuarios SET ?', { nombre: name, email: email, direccion: direccion, tlf: tlf, cuandrante: 1, pass: passHash, codigo_aprobacion: codigo, user: user, aprobado: 0, tipouser: 2 },
          (err, results) =>   {
                 if (err) {
                     console.log(err);
@@ -93,13 +93,13 @@ const register = async (req, res) => {
                     if (err) {
                         console.log(err)
                     }
-                  usuario = results;
+                  usuario = results[0];
 
                   // Generar el JWT
                    const token = await generarJWT(results[0].id);
   
                   res.status(200).json({
-                    results,
+                    usuarios: usuario,
                        token
                   });
                 });
@@ -117,11 +117,12 @@ const register = async (req, res) => {
 }
 
 const validarTokenUsuario = async (req, res = response ) => {
-
-    // Generar el JWT
-    const token = await generarJWT( req.usuario._id );
     
-    res.json({
+  
+    // Generar el JWT
+     const token = await generarJWT( req.usuario.id );
+    
+    res.status(200).json({
         usuario: req.usuario,
         token: token,
     })

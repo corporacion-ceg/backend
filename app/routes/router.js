@@ -3,6 +3,8 @@ const router = express.Router();
 const authController2 = require('../controllers/authController');
 const authController = require('../controllers/auth');
 const { check } = require('express-validator');
+const { validarJWT } = require('../middlewares/validar-jwt');
+const { nuevoPedido } = require('../controllers/pedidoController');
 
 
 
@@ -17,8 +19,19 @@ router.post('/register', [
 ] , authController.register);
 router.post('/login', authController.login);
 
+//validar token usuario
+router.get('/tokenValidate',[
+    validarJWT
+], authController.validarTokenUsuario );
+
+
 
 //productos
+
+//pedidos
+router.post('/nuevoPedido', [
+    validarJWT
+], nuevoPedido)
 
 
 module.exports = router
