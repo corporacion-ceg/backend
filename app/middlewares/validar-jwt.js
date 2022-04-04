@@ -35,7 +35,7 @@ const validarJWT = async (req = request, res = response, next) => {
         //     usuario = data;
         // })
 
-        await conexion.query('SELECT * FROM usuarios where id = ' + uid, async (err, results) => {
+        await conexion.query('SELECT * FROM usuarios2 where id = ' + uid, async (err, results) => {
             if (err) {
                 res.status(401).json({
                     msg: 'Token no válido'

@@ -19,13 +19,10 @@ const fileUpload = multer({
     storage: disckstorage
 }).single('file')
 
-<<<<<<< HEAD
 const PORT = process.env.PORT || 9000;
-=======
 const fileUpload2 = multer({
     storage: disckstorage
 }).single('Imagen')
->>>>>>> d70547c3b683b535271c376c05767f0ab1ed6d34
 
 app.use(express.urlencoded({ extended:false }));
 app.use(express.json());
@@ -34,13 +31,9 @@ app.use(cors());
 
 
 
-<<<<<<< HEAD
-
-=======
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'dbimages/')))
 app.use(express.static(path.join(__dirname, 'imgprod/')))
->>>>>>> d70547c3b683b535271c376c05767f0ab1ed6d34
 //API REST
 
 app.get('/productos',(req,res) => {

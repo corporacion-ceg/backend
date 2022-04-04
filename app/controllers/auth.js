@@ -14,7 +14,7 @@ const login = async(req, res = response) => {
     try {
       
 
-        conexion.query('SELECT * FROM usuarios WHERE user = ?', [user], async (err, results) => {
+        conexion.query('SELECT * FROM usuarios2 WHERE user = ?', [user], async (err, results) => {
 
             console.log(results.length == 0)
 
@@ -82,14 +82,14 @@ const register = async (req, res) => {
 
         var usuario;
 
-        conexion.query('INSERT INTO usuarios SET ?', { nombre: name, email: email, direccion: direccion, tlf: tlf, cuandrante: 1, pass: passHash, codigo_aprobacion: codigo, user: user, aprobado: 0, tipouser: 2 },
+        conexion.query('INSERT INTO usuarios2 SET ?', { nombre: name, email: email, direccion: direccion, tlf: tlf, cuandrante: 1, pass: passHash, codigo_aprobacion: codigo, user: user, aprobado: 0, tipouser: 2 },
          (err, results) =>   {
                 if (err) {
                     console.log(err);
                     res.status(500).send('Error al insertan usuario');
                 }
 
-                conexion.query('SELECT * FROM usuarios where id = last_insert_id()', async (err, results) => {
+                conexion.query('SELECT * FROM usuarios2 where id = last_insert_id()', async (err, results) => {
                     if (err) {
                         console.log(err)
                     }
@@ -121,9 +121,10 @@ const validarTokenUsuario = async (req, res = response ) => {
   
     // Generar el JWT
      const token = await generarJWT( req.usuario.id );
+     console.log(token)
     
     res.status(200).json({
-        usuario: req.usuario,
+        usuarios: req.usuario,
         token: token,
     })
 
