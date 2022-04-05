@@ -5,6 +5,7 @@ const authController = require('../controllers/auth');
 const { check } = require('express-validator');
 const { validarJWT } = require('../middlewares/validar-jwt');
 const { nuevoPedido } = require('../controllers/pedidoController');
+const { queryOrdenes } = require('../controllers/ordenesController');
 
 
 
@@ -32,6 +33,11 @@ router.get('/tokenValidate',[
 router.post('/nuevoPedido', [
     validarJWT
 ], nuevoPedido)
+
+//ordenes
+router.post('/ordenes',  [
+    validarJWT
+], queryOrdenes)
 
 
 module.exports = router

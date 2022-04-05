@@ -82,7 +82,7 @@ const register = async (req, res) => {
 
         var usuario;
 
-        conexion.query('INSERT INTO usuarios2 SET ?', { nombre: name, email: email, direccion: direccion, tlf: tlf, cuandrante: 1, pass: passHash, codigo_aprobacion: codigo, user: user, aprobado: 0, tipouser: 2 },
+        conexion.query('INSERT INTO usuarios2 SET ?', { nombre: name, email: email, direccion: direccion, tlf: tlf, cuandrante: 1, pass: passHash, codigo_aprobacion: codigo, user: user, aprobado: 1, tipouser: 1 },
          (err, results) =>   {
                 if (err) {
                     console.log(err);

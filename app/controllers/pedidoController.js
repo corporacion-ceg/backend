@@ -18,7 +18,7 @@ exports.nuevoPedido = async (req, res) => {
             (err, results) => {
                 if (err) {
                     console.log(err);
-                    //res.status(500).send('Error al insertan usuario');
+                    res.status(500).send('Error al insertan usuario');
                 }
 
                 conexion.query("SELECT MAX(id_pedido) as id FROM pedidos", (err, results) => {
