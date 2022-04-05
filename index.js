@@ -37,11 +37,11 @@ app.get('/productos',(req,res) => {
             return err;
         }
 
-        data.map(img => {
+        // data.map(img => {
            
-            fs.writeFileSync(path.join(__dirname, '/imgprod/' + img.id + 'prod-planetadulce.png'), img.img)
-            // data.push(...{ imagen: img.id + 'prod-planetadulce.png'});
-        })
+        //     fs.writeFileSync(path.join(__dirname, '/imgprod/' + img.id + 'prod-planetadulce.png'), img.img)
+        //     // data.push(...{ imagen: img.id + 'prod-planetadulce.png'});
+        // })
         console.log(data)
         res.json({productos: data,});
     })
@@ -264,6 +264,77 @@ app.get('/cuadrantes/', (req, res) => {
 
 
 });
+app.get('/almacenes/', (req, res) => {
+
+    db.query("SELECT * FROM almacenes", (err, data) => {
+        if (err) {
+            return err;
+        }
+        res.json(data);
+    })
+
+
+});
+app.post('/almacenes/', (req, res) => {
+   
+    const values = Object.values(req.body)
+    const sql = "INSERT INTO almacenes (nombre,descripcion) VALUES (?,?)";
+    db.query(sql, values, (err, data) => {
+        if (err) {
+
+            res.json({
+                result: 0,
+                mensaje: 'Error al agregar',
+                error: err
+            });
+        }
+
+        res.json({
+            result: 1,
+            mensaje: 'Agregado con Exito',
+            insertId: data.insertId
+        });
+    })
+
+
+});
+app.get('/almacenes/:id', (req, res) => {
+    console.log(req.params.id);
+    const ID = req.params.id;
+    const sql = "SELECT * FROM vista_stockalmacen WHERE id_almacen = ?"
+    db.query(sql, [ID], (err, data) => {
+        if (err) {
+            return err;
+        }
+
+
+        res.json({ almacen: data });
+    })
+
+})
+app.post('/almacen/:id', (req, res) => {
+    console.log(req.params.id);
+    const ID = req.params.id;
+    const sql = "SELECT * FROM vista_stockalmacen WHERE id_producto = ?"
+    db.query(sql, [ID], (err, data) => {
+        if (err) {
+            return err;
+        }
+if (data != NULL) {
+    const sql = "SELECT * FROM vista_stockalmacen WHERE id_almacen = ?"
+    db.query(sql, [ID], (err, data) => {
+        if (err) {
+            return err;
+        }
+
+
+        res.json({ almacen: data });
+    })
+}
+    })
+
+})
+
 app.listen(PORT,()=>{
     console.log('listening on port '+PORT);
 })
