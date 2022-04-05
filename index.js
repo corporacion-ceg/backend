@@ -1,7 +1,10 @@
-const express = require('express');
-const cors =  require('cors');
+
+require('dotenv').config({ path: 'env/.env' });
+var cookieParser = require('cookie-parser')
 const db = require("./config/conexion");
+const express = require('express');
 const multer = require('multer');
+const cors =  require('cors');
 const path = require('path');
 const fs = require('fs');
 const app = express();
@@ -16,14 +19,17 @@ const fileUpload = multer({
     storage: disckstorage
 }).single('file')
 
+const PORT = process.env.PORT || 9000;
 const fileUpload2 = multer({
     storage: disckstorage
 }).single('Imagen')
 
 app.use(express.urlencoded({ extended:false }));
 app.use(express.json());
+app.use(cookieParser())
+app.use(cors());
 
-const PORT = process.env.PORT || 9000;
+
 
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'dbimages/')))
@@ -334,6 +340,11 @@ if (data != NULL) {
     })
 
 })
+
+
+app.use('/', require('./app/routes/router'))
+
+
 
 app.listen(PORT,()=>{
     console.log('listening on port '+PORT);
