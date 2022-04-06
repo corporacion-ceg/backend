@@ -126,7 +126,7 @@ app.post('/productos', fileUpload2, (req, res) => {
 // USUARIOS
 app.get('/usuarios', (req, res) => {
 
-    db.query("SELECT * FROM usuarios", (err, data) => {
+    db.query("SELECT * FROM usuarios2", (err, data) => {
         if (err) {
             return err;
         }
