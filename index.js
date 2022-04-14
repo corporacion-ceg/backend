@@ -1,7 +1,10 @@
-const express = require('express');
-const cors =  require('cors');
+
+require('dotenv').config({ path: 'env/.env' });
+var cookieParser = require('cookie-parser')
 const db = require("./config/conexion");
+const express = require('express');
 const multer = require('multer');
+const cors =  require('cors');
 const path = require('path');
 const fs = require('fs');
 const app = express();
@@ -16,35 +19,49 @@ const fileUpload = multer({
     storage: disckstorage
 }).single('file')
 
+const PORT = process.env.PORT || 9000;
+const fileUpload2 = multer({
+    storage: disckstorage
+}).single('Imagen')
 
 app.use(express.urlencoded({ extended:false }));
 app.use(express.json());
+app.use(cookieParser())
+app.use(cors());
 
-const PORT = process.env.PORT || 9000;
+
 
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'dbimages/')))
+app.use(express.static(path.join(__dirname, 'imgprod/')))
 //API REST
 
 app.get('/productos',(req,res) => {
 
-    db.query("SELECT * FROM productos",(err,data)=>{
+    db.query(" SELECT * FROM vista_productos ",(err,data)=>{
         if (err) {
             return err;
         }
 
-        res.json({productos: data});
+        // data.map(img => {
+           
+        //     fs.writeFileSync(path.join(__dirname, '/imgprod/' + img.id + 'prod-planetadulce.png'), img.img)
+        //     // data.push(...{ imagen: img.id + 'prod-planetadulce.png'});
+        // })
+        console.log(data)
+        res.json({productos: data,});
     })
 
 });
 app.get('/productos/:id', (req, res) => {
     console.log(req.params.id);
     const ID = req.params.id;
-    const sql = "SELECT * FROM productos WHERE id = ?"
+    const sql = "SELECT * FROM vista_productos WHERE id = ?"
     db.query(sql,[ID], (err, data) => {
         if (err) {
             return err;
         }
+
 
         res.json({ productos: data });
     })
@@ -83,26 +100,33 @@ app.put('/productos',(req,res)=>{
     })
 })
 
-app.post('/productos',(req,res) => {
-    console.log(Object.values(req.body));
-    const values = Object.values(req.body)
-    const sql = "INSERT INTO productos(nombre,precio,marca) VALUES (?,?,?)"
-    db.query(sql,values,(err,data)=>{
+app.post('/productos', fileUpload2, (req, res) => {
+    const nombre = req.body.nombre
+    const descripcion = req.body.descripcion
+    const marca = req.body.Marca
+    const preciob = req.body.PrecioB
+    const precio = req.body.Precio
+    const precio2 = req.body.Precio2
+    const precio3 = req.body.Precio3
+    const img = fs.readFileSync(path.join(__dirname, '/imagenes/' + req.file.filename))
+    const sql = "INSERT INTO productos(nombre,descripcion,img,preciob,precio,precio2,precio3,marca) VALUES (?,?,?,?,?,?,?,?)"
+    db.query(sql, [nombre, descripcion, img,preciob,precio,precio2,precio3,marca], (err, data) => {
         if (err) {
+            console.log(err);
             return err;
         }
-
         res.json({
-            mensaje: "Agregado",
-            data
+            result: 1,
+            mensaje: 'agregado'
         });
     })
 })
 
+
 // USUARIOS
 app.get('/usuarios', (req, res) => {
 
-    db.query("SELECT * FROM usuarios", (err, data) => {
+    db.query("SELECT * FROM usuarios2", (err, data) => {
         if (err) {
             return err;
         }
@@ -210,12 +234,30 @@ app.get('/marcas/', (req, res) => {
         if (err) {
             return err;
         }
-
+        data.map(img => {
+           
+            fs.writeFileSync(path.join(__dirname, '/imgprod/' + img.id + 'marcas-planetadulce.png'), img.img)
+            // data.push(...{ imagen: img.id + 'prod-planetadulce.png'});
+        })
         res.json({marcas:data});
     })
 
 
 });
+app.get('/marcas/:id', (req, res) => {
+    console.log(req.params.id);
+    const ID = req.params.id;
+    const sql = "SELECT * FROM vista_productosm WHERE marcaid = ?"
+    db.query(sql, [ID], (err, data) => {
+        if (err) {
+            return err;
+        }
+
+
+        res.json({ productos: data });
+    })
+
+})
 app.get('/cuadrantes/', (req, res) => {
 
     db.query("SELECT * FROM cuadrantes", (err, data) => {
@@ -228,6 +270,82 @@ app.get('/cuadrantes/', (req, res) => {
 
 
 });
+app.get('/almacenes/', (req, res) => {
+
+    db.query("SELECT * FROM almacenes", (err, data) => {
+        if (err) {
+            return err;
+        }
+        res.json(data);
+    })
+
+
+});
+app.post('/almacenes/', (req, res) => {
+   
+    const values = Object.values(req.body)
+    const sql = "INSERT INTO almacenes (nombre,descripcion) VALUES (?,?)";
+    db.query(sql, values, (err, data) => {
+        if (err) {
+
+            res.json({
+                result: 0,
+                mensaje: 'Error al agregar',
+                error: err
+            });
+        }
+
+        res.json({
+            result: 1,
+            mensaje: 'Agregado con Exito',
+            insertId: data.insertId
+        });
+    })
+
+
+});
+app.get('/almacenes/:id', (req, res) => {
+    console.log(req.params.id);
+    const ID = req.params.id;
+    const sql = "SELECT * FROM vista_stockalmacen WHERE id_almacen = ?"
+    db.query(sql, [ID], (err, data) => {
+        if (err) {
+            return err;
+        }
+
+
+        res.json({ almacen: data });
+    })
+
+})
+app.post('/almacen/:id', (req, res) => {
+    console.log(req.params.id);
+    const ID = req.params.id;
+    const sql = "SELECT * FROM vista_stockalmacen WHERE id_producto = ?"
+    db.query(sql, [ID], (err, data) => {
+        if (err) {
+            return err;
+        }
+if (data != NULL) {
+    const sql = "SELECT * FROM vista_stockalmacen WHERE id_almacen = ?"
+    db.query(sql, [ID], (err, data) => {
+        if (err) {
+            return err;
+        }
+
+
+        res.json({ almacen: data });
+    })
+}
+    })
+
+})
+
+
+app.use('/', require('./app/routes/router'))
+
+
+
 app.listen(PORT,()=>{
     console.log('listening on port '+PORT);
 })
