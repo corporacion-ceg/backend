@@ -48,7 +48,7 @@ app.get('/productos',(req,res) => {
         //     fs.writeFileSync(path.join(__dirname, '/imgprod/' + img.id + 'prod-planetadulce.png'), img.img)
         //     // data.push(...{ imagen: img.id + 'prod-planetadulce.png'});
         // })
-        console.log(data)
+        
         res.json({productos: data,});
     })
 
@@ -120,6 +120,17 @@ app.post('/productos', fileUpload2, (req, res) => {
             mensaje: 'agregado'
         });
     })
+
+    db.query(" SELECT * FROM vista_productos ", (err, data) => {
+        if (err) {
+            return err;
+        }
+        data.map(img => {
+            fs.writeFileSync(path.join(__dirname, '/imgprod/' + img.id + 'prod-planetadulce.png'), img.img)
+        })
+
+        console.log('ACTUALIZADO')
+    })
 })
 
 
@@ -156,6 +167,7 @@ app.post('/usuarios', (req, res) => {
             mensaje: 'Agregado con Exito',
             insertId: data.insertId
         });
+        
     })
 })
 
@@ -341,11 +353,21 @@ if (data != NULL) {
 
 })
 
+app.get('/SelectProductos/', (req, res) => {
+
+    db.query(" SELECT id as value,nombre as label FROM vista_productos ", (err, data) => {
+        if (err) {
+            return err;
+        }
+
+        res.json({data});
+       
+    })
+
+});
 
 app.use('/', require('./app/routes/router'))
 
 
 
-app.listen(PORT,()=>{
-    console.log('listening on port '+PORT);
-})
+app.listen(PORT)
