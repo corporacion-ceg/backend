@@ -366,6 +366,30 @@ app.get('/SelectProductos/', (req, res) => {
 
 });
 
+app.post('/stock/', (req, res) => {
+   
+    const sql = "SELECT * FROM vista_stockalmacen WHERE id_producto = ?"
+    db.query(sql, [ID], (err, data) => {
+        if (err) {
+            return err;
+        }
+        if (data != NULL) {
+            const sql = "SELECT * FROM vista_stockalmacen WHERE id_almacen = ?"
+            db.query(sql, [ID], (err, data) => {
+                if (err) {
+                    return err;
+                }
+
+
+                res.json({ almacen: data });
+            })
+        }
+    })
+
+})
+
+
+
 app.use('/', require('./app/routes/router'))
 
 
