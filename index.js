@@ -367,27 +367,26 @@ app.get('/SelectProductos/', (req, res) => {
 });
 
 app.post('/stock/', (req, res) => {
-   
-    const sql = "SELECT * FROM vista_stockalmacen WHERE id_producto = ?"
-    db.query(sql, [ID], (err, data) => {
+    const values = Object.values(req.body)
+    const sql = "INSERT INTO almacenes (nombre,descripcion) VALUES (?,?)";
+    db.query(sql, values, (err, data) => {
         if (err) {
-            return err;
-        }
-        if (data != NULL) {
-            const sql = "SELECT * FROM vista_stockalmacen WHERE id_almacen = ?"
-            db.query(sql, [ID], (err, data) => {
-                if (err) {
-                    return err;
-                }
 
-
-                res.json({ almacen: data });
-            })
+            res.json({
+                result: 0,
+                mensaje: 'Error al agregar',
+                error: err
+            });
         }
-    })
+
+        res.json({
+            result: 1,
+            mensaje: 'Agregado con Exito',
+            insertId: data.insertId
+        });
 
 })
-
+})
 
 
 app.use('/', require('./app/routes/router'))
