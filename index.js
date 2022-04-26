@@ -368,24 +368,26 @@ app.get('/SelectProductos/', (req, res) => {
 
 app.post('/stock/', (req, res) => {
     const values = Object.values(req.body)
+
+    console.log(values)
     const sql = "INSERT INTO almacenes (nombre,descripcion) VALUES (?,?)";
-    db.query(sql, values, (err, data) => {
-        if (err) {
+//     db.query(sql, values, (err, data) => {
+//         if (err) {
 
-            res.json({
-                result: 0,
-                mensaje: 'Error al agregar',
-                error: err
-            });
-        }
+//             res.json({
+//                 result: 0,
+//                 mensaje: 'Error al agregar',
+//                 error: err
+//             });
+//         }
 
-        res.json({
-            result: 1,
-            mensaje: 'Agregado con Exito',
-            insertId: data.insertId
-        });
+//         res.json({
+//             result: 1,
+//             mensaje: 'Agregado con Exito',
+//             insertId: data.insertId
+//         });
 
-})
+// })
 })
 
 
