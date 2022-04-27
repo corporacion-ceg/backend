@@ -331,7 +331,6 @@ app.get('/almacenes/:id', (req, res) => {
 
 })
 app.post('/almacen/:id', (req, res) => {
-    console.log(req.params.id);
     const ID = req.params.id;
     const sql = "SELECT * FROM vista_stockalmacen WHERE id_producto = ?"
     db.query(sql, [ID], (err, data) => {
@@ -365,29 +364,74 @@ app.get('/SelectProductos/', (req, res) => {
     })
 
 });
+app.get('/numlote/', (req, res) => {
 
+    db.query(" SELECT id_lote + 1 as numlote FROM lotes ORDER BY id_lote DESC", (err, data) => {
+        if (err) {
+            res.json(err);
+        }
+        // console.log(data)
+        if (data.length === 0){
+            res.json({ numlote: 1});
+        }else{
+            
+            res.json({ numlote: data[0]['numlote']});
+        }
+    
+    })
+
+});
+app.post('/numlote/', (req, res) => {
+    const values = Object.values(req.body)
+    console.log(values)
+    const sql = "INSERT INTO lotes (almacen,fecha) VALUES (?,?)";
+    db.query(sql, values, (err, data) => {
+        if (err) {
+
+            res.json({
+                result: 0,
+                mensaje: 'Error al agregar',
+                error: err
+            });
+        }
+
+        res.json({
+            result: 1,
+            mensaje: 'Agregado con Exito',
+            insertId: data.insertId
+        });
+
+    })
+})
 app.post('/stock/', (req, res) => {
     const values = Object.values(req.body)
+    const producto = (values[0])
 
-    console.log(values)
-    const sql = "INSERT INTO almacenes (nombre,descripcion) VALUES (?,?)";
-//     db.query(sql, values, (err, data) => {
-//         if (err) {
+  
+    const sql = "INSERT INTO registrocargas (producto,cantidad,fecha,almacen,lote) VALUES (?,?,?,?,?)";
+    db.query(sql, values, (err, data) => {
+        if (err) {
+            res.json({
+                result: 0,
+                mensaje: 'Error al agregar',
+                error: err
+            });
+        }
+    })
 
-//             res.json({
-//                 result: 0,
-//                 mensaje: 'Error al agregar',
-//                 error: err
-//             });
-//         }
 
-//         res.json({
-//             result: 1,
-//             mensaje: 'Agregado con Exito',
-//             insertId: data.insertId
-//         });
+    const sql1 = "SELECT id_producto  FROM stockalmacen ";
+     db.query(sql1, values, (err, data) => {
+        if (err) {
+            res.json({
+                result: 0,
+                mensaje: 'Error al agregar',
+                error: err
+            });
+        }
+        return 1,
+    })
 
-// })
 })
 
 
