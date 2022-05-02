@@ -10,7 +10,7 @@ const { generarJWT } = require('../helpers/generar-jwt');
 const login = async(req, res = response) => {
 
     const { user, pass } = req.body;
-
+    console.log(user)
     try {
       
 
@@ -33,10 +33,10 @@ const login = async(req, res = response) => {
                     msg: 'Usuario / Password no son correctos - password'
                 });
             }
-
+            console.log(results[0])
             // Generar el JWT
             const token = await generarJWT( results[0].id );
-
+            
             const usuarios = results[0];
     
             res.status(200).json({
@@ -94,7 +94,7 @@ const register = async (req, res) => {
                         console.log(err)
                     }
                   usuario = results[0];
-
+                console.log(results[0])
                   // Generar el JWT
                    const token = await generarJWT(results[0].id);
   

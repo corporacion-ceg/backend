@@ -49,7 +49,7 @@ app.get('/productos',(req,res) => {
         //     // data.push(...{ imagen: img.id + 'prod-planetadulce.png'});
         // })
         
-        res.json({productos: data,});
+        res.json({productos: data});
     })
 
 });
@@ -403,9 +403,11 @@ app.post('/numlote/', (req, res) => {
 
     })
 })
-app.post('/stock/', (req, res) => {
+app.post('/stock/', async (req, res) => {
     const values = Object.values(req.body)
-    const producto = (values[0])
+    const id_producto = parseInt(values[0])
+    const stock = parseInt(values[1])
+    const id_almacen = parseInt(values[3])
 
   
     const sql = "INSERT INTO registrocargas (producto,cantidad,fecha,almacen,lote) VALUES (?,?,?,?,?)";
@@ -419,18 +421,51 @@ app.post('/stock/', (req, res) => {
         }
     })
 
-
-    const sql1 = "SELECT id_producto  FROM stockalmacen ";
-     db.query(sql1, values, (err, data) => {
-        if (err) {
+ 
+    const sql1 = "SELECT *  FROM stockalmacen WHERE id_producto =  ?  and id_almacen = ? ";
+    const result =  await db.query(sql1, [id_producto, id_almacen], (err, data) => {
+            if (err) {
+                res.json({
+                    result: 0,
+                    mensaje: 'Error al agregar',
+                    error: err
+                });
+            }
+            if(data.length > 0){
+        const sql3 = "UPDATE stockalmacen SET stock = stock + ? WHERE id_producto =  ?  and id_almacen = ?  ";
+                db.query(sql3, [stock, id_producto, id_almacen], (err, data) => {
+            if (err) {
+                res.json({
+                    result: 0,
+                    mensaje: 'Error al agregar',
+                    error: err
+                });
+            }
             res.json({
-                result: 0,
-                mensaje: 'Error al agregar',
-                error: err
+                result: 1,
+                mensaje: 'Agregado con Exito',
+                insertId: data.insertId
             });
-        }
-        return 1,
-    })
+
+        })
+            }else{
+         const sql4 = "INSERT INTO stockalmacen (id_producto,stock,id_almacen) VALUES (?,?,?) ";
+        db.query(sql4,[id_producto, stock,id_almacen], (err, data) => {
+            if (err) {
+                res.json({
+                    result: 0,
+                    mensaje: 'Error al agregar',
+                    error: err
+                });
+            }
+            res.json({
+                result: 1,
+                mensaje: 'Agregado con Exito',
+                insertId: data.insertId
+            });
+        })
+            }
+        })
 
 })
 
