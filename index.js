@@ -384,7 +384,7 @@ app.get('/numlote/', (req, res) => {
 app.post('/numlote/', (req, res) => {
     const values = Object.values(req.body)
     console.log(values)
-    const sql = "INSERT INTO lotes (almacen,fecha) VALUES (?,?)";
+    const sql = "INSERT INTO lotes (almacen,fecha,usuario) VALUES (?,?,?)";
     db.query(sql, values, (err, data) => {
         if (err) {
 
@@ -410,7 +410,7 @@ app.post('/stock/', async (req, res) => {
     const id_almacen = parseInt(values[3])
 
   
-    const sql = "INSERT INTO registrocargas (producto,cantidad,fecha,almacen,lote) VALUES (?,?,?,?,?)";
+    const sql = "INSERT INTO registrocargas (producto,cantidad,fecha,almacen,lote,usuario) VALUES (?,?,?,?,?,?)";
     db.query(sql, values, (err, data) => {
         if (err) {
             res.json({
@@ -466,6 +466,39 @@ app.post('/stock/', async (req, res) => {
         })
             }
         })
+
+})
+
+app.get('/pedidos/', (req, res) => {
+
+    db.query(" SELECT * FROM vista_pedidos ", (err, data) => {
+        if (err) {
+            res.json(err);
+        }
+        // console.log(data)
+            res.json(data);
+        
+
+    })
+
+});
+app.put('/pedidos', (req, res) => {
+   
+    // console.log(Object.values(req.body));
+    const values = Object.values(req.body)
+
+    const sql = "UPDATE pedidos SET estatus = ?  WHERE id_pedido = ? ";
+    db.query(sql, values, (err, data) => {
+        if (err) {
+            res.json({
+                mensaje: err
+            });
+        }
+        res.json({
+            mensaje: 'cambiado con Exito'
+        });
+    })
+
 
 })
 
