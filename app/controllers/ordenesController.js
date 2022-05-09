@@ -22,3 +22,22 @@ exports.queryOrdenes = async (req, res) => {
         })
      } )
 }
+
+exports.queryDetalleOrden = async (req, res) => {
+
+    const id_pedido = req.body.id_pedido
+    console.log('si entrehaj');
+    conexion.query("SELECT id_producto_pedido, id_pedido, producto, cantidad, id_producto, preciob, precio, precio2, precio3, marca FROM productospedido  LEFT JOIN productos ON productospedido.id_producto = productos.id where productospedido.id_pedido = " + id_pedido, (err, results) => {
+
+        if (err) {
+            console.log(err);
+            res.status(500).send('Error al consultar ordenes');
+        }
+        console.log(results[0])
+
+        res.status(200).json({
+            results: results
+        })
+    })
+
+}

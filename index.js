@@ -146,7 +146,18 @@ app.get('/usuarios', (req, res) => {
     })
 
 });
+app.put('/usuarios', (req, res) => {
+    const values = Object.values(req.body)
+// console.log(values)
+    db.query("UPDATE usuarios2 SET aprobado = ? WHERE id = ?",values, (err, data) => {
+        if (err) {
+            return err;
+        }
 
+        res.json(data);
+    })
+
+});
 
 app.post('/usuarios', (req, res) => {
     console.log(Object.values(req.body));
@@ -482,6 +493,22 @@ app.get('/pedidos/', (req, res) => {
     })
 
 });
+app.get('/detallepedidos/:id', (req, res) => {
+    
+    const ID = req.params.id;
+
+    db.query(" SELECT * FROM vista_detallep WHERE id_pedido = ?",[ID], (err, data) => {
+        if (err) {
+            res.json(err);
+        }
+        // console.log(data)
+        res.json(data);
+
+
+    })
+
+});
+
 app.put('/pedidos', (req, res) => {
    
     // console.log(Object.values(req.body));

@@ -12,9 +12,9 @@ exports.nuevoPedido = async (req, res) => {
         const monto = req.body.monto
         const fechacreacion = req.body.fechacreacion
         const numref = req.body.numref
+        const banco  = req.body.banco
 
-
-        conexion.query('INSERT INTO pedidos SET ?', { id_user: iduser, monto: monto, num_ref: numref },
+        conexion.query('INSERT INTO pedidos SET ?', { id_user: iduser, monto: monto, num_ref: numref,banco:banco },
             (err, results) => {
                 if (err) {
                     console.log(err);
@@ -37,7 +37,12 @@ exports.nuevoPedido = async (req, res) => {
                         conexion.query('INSERT INTO productospedido SET ?', { id_pedido, producto: nombre, cantidad, id_producto : id },
                             (err, results) => { 
                                 if (err) return  res.status(500).send('Error al insertan usuario');
-                                console.log('insertado')
+                                
+                                // conexion.query('UPDATE stockalmacen SET stock = (stockalmacen - ?) WHERE id_producto', { cantidad, id_producto: id },(err,result) => {
+                                //     if (err) return res.status(500).send('Error al insertan usuario');
+
+                                // })
+
                             })
                         });
                         res.status(200).json({

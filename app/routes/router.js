@@ -6,7 +6,7 @@ const { check } = require('express-validator');
 const { validarJWT } = require('../middlewares/validar-jwt');
 const { nuevoPedido } = require('../controllers/pedidoController');
 const { queryOrdenes } = require('../controllers/ordenesController');
-
+const { queryDetalleOrden} = require('../controllers/ordenesController')
 
 
 //usuarios
@@ -39,5 +39,8 @@ router.post('/ordenes',  [
     validarJWT
 ], queryOrdenes)
 
+router.post('/detalleOrden', [
+    validarJWT
+], queryDetalleOrden)
 
 module.exports = router
