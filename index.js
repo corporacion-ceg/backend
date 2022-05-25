@@ -203,19 +203,18 @@ app.post('/image', fileUpload, (req, res) => {
 app.get('/usuarios/:id', (req, res) => {
     // console.log(req.params.id);
     const ID = req.params.id;
-    const sql = "SELECT * FROM usuarios WHERE id = ?"
+    const sql = "SELECT * FROM usuario_detail  WHERE id = ?"
     db.query(sql, [ID], (err, data) => {
         if (err) {
            
             return err;
         }
 
-        fs.writeFileSync(path.join(__dirname, '/dbimages/'+ID+'planetadulce.png'), data[0].imagen)
+        // fs.writeFileSync(path.join(__dirname, '/dbimages/'+ID+'planetadulce.png'), data[0].imagen)
         
 
        res.json({
-           data,
-           imagen:ID+'planetadulce.png' 
+           data
     });
     })
 
@@ -330,7 +329,7 @@ app.post('/almacenes/', (req, res) => {
 app.get('/almacenes/:id', (req, res) => {
     console.log(req.params.id);
     const ID = req.params.id;
-    const sql = "SELECT * FROM vista_stockalmacen WHERE id_almacen = ?"
+    const sql = "SELECT * FROM vista_stockalmaen WHERE id_almacen = ?"
     db.query(sql, [ID], (err, data) => {
         if (err) {
             return err;
