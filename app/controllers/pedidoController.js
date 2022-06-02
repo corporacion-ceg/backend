@@ -48,6 +48,7 @@ exports.nuevoPedido = async (req, res) => {
                         res.status(200).json({
                             msg: 'Pedido creado con exito'
                         });
+                    io.emit("mensaje", "Prueba de conexion")
                 });
 
             });
