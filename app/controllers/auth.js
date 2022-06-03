@@ -82,7 +82,7 @@ const register = async (req, res) => {
 
         var usuario;
 
-        conexion.query('INSERT INTO usuarios2 SET ?', { nombre: name, email: email, direccion: direccion, tlf: tlf, cuandrante: 1, pass: passHash, codigo_aprobacion: codigo, user: user, aprobado: 1, tipouser: 1 },
+        conexion.query('INSERT INTO usuarios2 SET ?', { nombre: name, email: email, direccion: direccion, tlf: tlf, cuandrante: 1, pass: passHash, codigo_aprobacion: codigo, user: user, aprobado: 0, tipouser: 1 },
          (err, results) =>   {
                 if (err) {
                     console.log(err);
@@ -116,9 +116,70 @@ const register = async (req, res) => {
 
 }
 
+const direccionLocal = async (req, res) => {
+    try {
+       
+        const iduser = req.body.iduser;
+        const direccion = req.body.direccion;
+        const latitud = req.body.region.latitude;
+        const longitud = req.body.region.longitude;
+
+        if (!direccion || !latitud || !longitud) {
+            res.status(500).send('Debe llenar los campos');
+        } else {
+            console.log(req.body)
+            conexion.query(`UPDATE usuarios2 SET direccion = "${direccion}", latitud = "${latitud}", longitud = "${longitud}"  WHERE id = ${iduser}`, async (err, results) => {
+
+                if (err) {
+                    console.log(err);
+                    res.status(500).send('Error al insertan usuario');
+                }
+                console.log(results)
+
+                
+                conexion.query(`SELECT * FROM usuarios2 where id = ${iduser}`, async (err, results) => {
+                    if (err) {
+                        console.log(err)
+                    }
+                  usuario = results[0];
+                  // Generar el JWT
+                  res.status(200).json({
+                       msg: 'actualizacion exitosa',
+                       usuarios: usuario,
+                  })
+                });
+
+
+            })
+        }
+
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+const queryDireccionLocal = async (req, res) => {
+    try {
+        const iduser = req.body.iduser;
+     
+                conexion.query(`SELECT * FROM usuarios2 where id = ${iduser}`, async (err, results) => {
+                    if (err) {
+                        console.log(err)
+                    }
+                  usuario = results[0];
+                  // Generar el JWT
+                  res.status(200).json({
+                       usuarios: usuario,
+                  })
+                });
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 const validarTokenUsuario = async (req, res = response ) => {
-    
-  
     // Generar el JWT
      const token = await generarJWT( req.usuario.id );
      console.log(token)
@@ -135,6 +196,8 @@ const validarTokenUsuario = async (req, res = response ) => {
 module.exports = {
     login,
     validarTokenUsuario,
-    register
+    register,
+    direccionLocal,
+    queryDireccionLocal
     
 }
