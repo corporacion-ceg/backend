@@ -65,7 +65,7 @@ exports.actStatusPedido = async (req, res) => {
         const id_pedido = req.body.id_pedido
 
 
-        conexion.query(`UPDATE pedidos SET status = 3 WHERE  id_pedido =${id_pedido}`, 
+        conexion.query(`UPDATE pedidos SET estatus = 3 WHERE  id_pedido =${id_pedido}`, 
             (err, results) => {
                 if (err) {
                     console.log(err);
