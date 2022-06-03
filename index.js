@@ -8,6 +8,31 @@ const cors =  require('cors');
 const path = require('path');
 const fs = require('fs');
 const app = express();
+var server = require('http').Server(express);
+var io = require('socket.io')(server, {
+    cors: {
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"]
+    },
+});
+
+
+
+
+let onlineUsers = [];
+
+const addNewUser = (username, socketId) => {
+    !onlineUsers.some((user) => user.username === username) &&
+        onlineUsers.push({ username, socketId });
+};
+
+io.on("connection", (socket) => {
+    // io.emit("mensaje","Prueba de conexion")
+    socket.on("newUser", (username) => {
+       
+        addNewUser(username, socket.id);
+    });
+});
 
 const disckstorage = multer.diskStorage({
     destination: path.join(__dirname, '/imagenes/'),
@@ -42,7 +67,7 @@ app.get('/productos',(req,res) => {
         if (err) {
             return err;
         }
-
+      
         // data.map(img => {
            
         //     fs.writeFileSync(path.join(__dirname, '/imgprod/' + img.id + 'prod-planetadulce.png'), img.img)
@@ -62,7 +87,8 @@ app.get('/productos/:id', (req, res) => {
             return err;
         }
 
-
+       
+        io.emit("mensaje", "Prueba de conexion")
         res.json({ productos: data });
     })
 
@@ -93,7 +119,7 @@ app.put('/productos',(req,res)=>{
                 mensaje: err
             });
         }
-      
+        
         res.json({
             mensaje:'Agregado con Exito'
         });
@@ -131,6 +157,8 @@ app.post('/productos', fileUpload2, (req, res) => {
 
         console.log('ACTUALIZADO')
     })
+
+    
 })
 
 
@@ -141,7 +169,7 @@ app.get('/usuarios', (req, res) => {
         if (err) {
             return err;
         }
-
+        io.emit("mensaje", "Nueva Pedido")
         res.json( data );
     })
 
@@ -274,8 +302,7 @@ app.get('/marcas/:id', (req, res) => {
         if (err) {
             return err;
         }
-
-
+        
         res.json({ productos: data });
     })
 
@@ -532,5 +559,5 @@ app.put('/pedidos', (req, res) => {
 app.use('/', require('./app/routes/router'))
 
 
-
+io.listen(9001)
 app.listen(PORT)
