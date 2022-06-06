@@ -188,9 +188,30 @@ app.put('/usuarios', (req, res) => {
 });
 
 app.post('/usuarios', (req, res) => {
-    console.log(Object.values(req.body));
+    console.log(req.body);
     const values = Object.values(req.body)
-    const sql = "INSERT INTO usuarios (nombre,email,tlf,tn,direccion,cuandrante) VALUES (?,?,?,?,?,?)";
+    const tipo = req.body.tipouser
+    var sql;
+    switch (tipo) {
+        case 1:
+             sql = "INSERT INTO usuarios2 (nombre,email,tlf,direccion,cuandrante,rif,tipouser,user) VALUES (?,?,?,?,?,?,?,?)";
+            break;
+        case 2:
+            sql = "INSERT INTO usuarios2 (nombre,tlf,email,user,pass,direccion,tipouser) VALUES (?,?,?,?,?,?,?)";
+            break;
+        case 3:
+             sql = "INSERT INTO usuarios2 (nombre,email,tlf,tn,direccion,cuandrante) VALUES (?,?,?,?,?,?)";
+            break;
+        default:
+            res.json({
+                result: 0,
+                mensaje: 'Error al agregar',
+                error: 'tipo de usuario'
+            });
+            return 0;
+            break;
+    }
+   
     db.query(sql, values, (err, data) => {
         if (err) {
 
@@ -199,8 +220,10 @@ app.post('/usuarios', (req, res) => {
                 mensaje: 'Error al agregar',
                 error:err
             });
-        }
 
+            return err;
+        }
+        // console.log(data)
         res.json({
             result: 1,
             mensaje: 'Agregado con Exito',
@@ -356,13 +379,14 @@ app.post('/almacenes/', (req, res) => {
 app.get('/almacenes/:id', (req, res) => {
     console.log(req.params.id);
     const ID = req.params.id;
-    const sql = "SELECT * FROM vista_stockalmaen WHERE id_almacen = ?"
+    const sql = "SELECT * FROM vista_stockalmacen WHERE id_almacen = ?"
     db.query(sql, [ID], (err, data) => {
         if (err) {
+            console.log(err);
             return err;
         }
 
-
+        console.log(data)
         res.json({ almacen: data });
     })
 
