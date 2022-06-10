@@ -8,11 +8,13 @@ const cors =  require('cors');
 const path = require('path');
 const fs = require('fs');
 const app = express();
+const bcrypt = require('bcrypt')
 var server = require('http').Server(express);
 var io = require('socket.io')(server, {
     cors: {
-        origin: "http://localhost:3000",
-        methods: ["GET", "POST"]
+        origin: "http://localhost:3001",
+        methods: ["GET", "POST"],
+
     },
 });
 
@@ -187,14 +189,17 @@ app.put('/usuarios', (req, res) => {
 
 });
 
-app.post('/usuarios', (req, res) => {
+app.post('/usuarios', async(req, res) => {
     console.log(req.body);
     const values = Object.values(req.body)
     const tipo = req.body.tipouser
+    const pass = req.body.rif
+    const saltRounds = 10;
+    let passHash = await bcrypt.hash(pass, saltRounds);
     var sql;
     switch (tipo) {
         case 1:
-             sql = "INSERT INTO usuarios2 (nombre,email,tlf,direccion,cuandrante,rif,tipouser,user) VALUES (?,?,?,?,?,?,?,?)";
+             sql = "INSERT INTO usuarios2 (nombre,email,tlf,direccion,cuandrante,rif,tipouser,user,pass) VALUES (?,?,?,?,?,?,?,?,"+passHash+")";
             break;
         case 2:
             sql = "INSERT INTO usuarios2 (nombre,tlf,email,user,pass,direccion,tipouser) VALUES (?,?,?,?,?,?,?)";
