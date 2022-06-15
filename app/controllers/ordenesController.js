@@ -10,7 +10,7 @@ exports.queryOrdenes = async (req, res) => {
     const iduser = req.body.iduser
 
 
-    conexion.query("SELECT * FROM pedidos where id_user = " + iduser, (err, results) => {
+    conexion.query(`SELECT * FROM pedidos left join estatus on estatus.id_estatus = pedidos.estatus where id_user = ${iduser}`, (err, results) => {
         if (err) {
             console.log(err);
             res.status(500).send('Error al consultar ordenes');
@@ -25,7 +25,7 @@ exports.queryOrdenes = async (req, res) => {
 
 exports.queryOrdenesDelivery = async (req, res) => {
     const iduser = req.body.iduser
-    conexion.query("SELECT * FROM pedidos where id_delivery = " + iduser, (err, results) => {
+    conexion.query("SELECT * FROM pedidos where estatus != 3 and id_delivery = " + iduser, (err, results) => {
         if (err) {
             console.log(err);
             res.status(500).send('Error al consultar ordenes');

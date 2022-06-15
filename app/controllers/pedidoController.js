@@ -48,7 +48,6 @@ exports.nuevoPedido = async (req, res) => {
                         res.status(200).json({
                             msg: 'Pedido creado con exito'
                         });
-                    io.emit("mensaje", "Prueba de conexion")
                 });
 
             });
@@ -77,7 +76,6 @@ exports.actStatusPedido = async (req, res) => {
                 });
             });
         console.log(req.body);
-
     } catch (error) {
         res.status(500).send('Error al insertan usuario');
     }

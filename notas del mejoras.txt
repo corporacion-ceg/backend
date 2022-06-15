@@ -1,0 +1,22 @@
+MOVIL
+
+
+
+direccion actual del usuario.
+chat 
+logeo con huellas
+
+
+Validar Form de registro ----------- LISTO
+validar form vaciar campos ------- LISTO
+vaciar pedido ------ LISTO
+monto con dos decimales--------- LISTO 
+vaciar carrito automaticamente cuando se crea el pedido, boton ------- LISTO
+chquear funcionalidad del boton pagar  -- LISTO
+validar usuario existente --> LISTO
+detalle de pedido -- LISTO
+estatus de pedido al cliente en ordenes -- LISTO
+
+chequear mensaje error login -------?
+Validar login al pagar --------?
+

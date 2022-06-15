@@ -76,36 +76,55 @@ const register = async (req, res) => {
         const tlf = req.body.tlf;
         const codigo = Math.random().toString(36).substr(2, 18);
         const direccion = req.body.direccion;
+        const latitud = req.body.latitud;
+        const longitud = req.body.longitud;
         let passHash = await bcrypt.hash(pass, 10);
 
-        console.log(name, user, pass, passHash);
+        console.log(name, user, pass, passHash, latitud,longitud );
 
         var usuario;
 
-        conexion.query('INSERT INTO usuarios2 SET ?', { nombre: name, email: email, direccion: direccion, tlf: tlf, cuandrante: 1, pass: passHash, codigo_aprobacion: codigo, user: user, aprobado: 0, tipouser: 1 },
-         (err, results) =>   {
-                if (err) {
-                    console.log(err);
-                    res.status(500).send('Error al insertan usuario');
-                }
+        conexion.query(`SELECT * FROM usuarios2 where user = "${user}"`, (err, results) => {
 
-                conexion.query('SELECT * FROM usuarios2 where id = last_insert_id()', async (err, results) => {
-                    if (err) {
-                        console.log(err)
-                    }
-                  usuario = results[0];
-                console.log(results[0])
-                  // Generar el JWT
-                   const token = await generarJWT(results[0].id);
-  
-                  res.status(200).json({
-                    usuarios: usuario,
-                       token
+            if (results[0]) {
+                
+                res.status(200).json({
+                    msg: 'Ese usuario ya existe'
                   });
-                });
-            
-             
-            });
+            } else {
+                conexion.query('INSERT INTO usuarios2 SET ?', { nombre: name, email: email, direccion: direccion, tlf: tlf, cuandrante: 1, pass: passHash, codigo_aprobacion: codigo, user: user, aprobado: 0, tipouser: 1, longitud, latitud },
+                (err, results) =>   {
+                       if (err) {
+                           console.log(err);
+                           res.status(500).send('Error al insertan usuario');
+                       }
+       
+                       conexion.query('SELECT * FROM usuarios2 where id = last_insert_id()', async (err, results) => {
+                           if (err) {
+                               console.log(err)
+                           }
+                         usuario = results[0];
+                       console.log(results[0])
+                         // Generar el JWT
+                          const token = await generarJWT(results[0].id);
+         
+                         res.status(200).json({
+                           usuarios: usuario,
+                              token
+                         });
+                       });
+                   
+                    
+                   });
+            }
+
+
+
+       })
+
+
+
+       
     } catch (error) {
         console.log(error);
     }
