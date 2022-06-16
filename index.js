@@ -613,4 +613,6 @@ app.use('/', require('./app/routes/router'))
 
 
 // io.listen(9001)
-app.listen(PORT)
+app.listen(PORT,() =>{
+    console.log("ESCUCHANDO PUERTO " + PORT)
+})
