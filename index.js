@@ -4,43 +4,44 @@ var cookieParser = require('cookie-parser')
 const db = require("./config/conexion");
 const express = require('express');
 const multer = require('multer');
-const cors =  require('cors');
+const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const app = express();
 const bcrypt = require('bcrypt')
-var server = require('http').Server(express);
-var io = require('socket.io')(server, {
-    cors: {
-        origin: "http://localhost:3001",
-        methods: ["GET", "POST"],
+// var server = require('http').Server(express);
+// var io = require('socket.io')(server, {
+//     cors: {
+//         origin: "https://central.tuplanetadulce.com",
+//         methods: ["GET", "POST"],
 
-    },
-});
-
-
+//     },
+// });
 
 
-let onlineUsers = [];
 
-const addNewUser = (username, socketId) => {
-    !onlineUsers.some((user) => user.username === username) &&
-        onlineUsers.push({ username, socketId });
-};
 
-io.on("connection", (socket) => {
-    // io.emit("mensaje","Prueba de conexion")
-    socket.on("newUser", (username) => {
-       
-        addNewUser(username, socket.id);
-    });
-});
+// let onlineUsers = [];
+
+// const addNewUser = (username, socketId) => {
+//     !onlineUsers.some((user) => user.username === username) &&
+//         onlineUsers.push({ username, socketId });
+// };
+
+// io.on("connection", (socket) => {
+//     // io.emit("mensaje","Prueba de conexion")
+//     socket.on("newUser", (username) => {
+
+//         addNewUser(username, socket.id);
+//     });
+// });
 
 const disckstorage = multer.diskStorage({
     destination: path.join(__dirname, '/imagenes/'),
     filename: (req, file, cb) => {
         cb(null, Date.now() + path.extname(file.originalname));
-    }})
+    }
+})
 
 const fileUpload = multer({
     storage: disckstorage
@@ -51,7 +52,7 @@ const fileUpload2 = multer({
     storage: disckstorage
 }).single('Imagen')
 
-app.use(express.urlencoded({ extended:false }));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParser())
 app.use(cors());
@@ -63,20 +64,20 @@ app.use(express.static(path.join(__dirname, 'dbimages/')))
 app.use(express.static(path.join(__dirname, 'imgprod/')))
 //API REST
 
-app.get('/productos',(req,res) => {
+app.get('/productos', (req, res) => {
 
-    db.query(" SELECT * FROM vista_productos ",(err,data)=>{
+    db.query(" SELECT * FROM vista_productos ", (err, data) => {
         if (err) {
             return err;
         }
-      
+
         // data.map(img => {
-           
+
         //     fs.writeFileSync(path.join(__dirname, '/imgprod/' + img.id + 'prod-planetadulce.png'), img.img)
         //     // data.push(...{ imagen: img.id + 'prod-planetadulce.png'});
         // })
-        
-        res.json({productos: data});
+
+        res.json({ productos: data });
     })
 
 });
@@ -84,13 +85,13 @@ app.get('/productos/:id', (req, res) => {
     console.log(req.params.id);
     const ID = req.params.id;
     const sql = "SELECT * FROM vista_productos WHERE id = ?"
-    db.query(sql,[ID], (err, data) => {
+    db.query(sql, [ID], (err, data) => {
         if (err) {
             return err;
         }
 
-       
-        io.emit("mensaje", "Prueba de conexion")
+
+        // io.emit("mensaje", "Prueba de conexion")
         res.json({ productos: data });
     })
 
@@ -104,14 +105,14 @@ app.delete('/productos/:id', (req, res) => {
             return err;
         }
 
-         res.json({
+        res.json({
             mensaje: "Eliminado con exito",
             result
         });
     })
 
 })
-app.put('/productos',(req,res)=>{
+app.put('/productos', (req, res) => {
     console.log(Object.values(req.body));
     const values = Object.values(req.body)
     const sql = "UPDATE productos SET nombre = ?,precio = ?,marca = ? WHERE id = ? ";
@@ -121,9 +122,9 @@ app.put('/productos',(req,res)=>{
                 mensaje: err
             });
         }
-        
+
         res.json({
-            mensaje:'Agregado con Exito'
+            mensaje: 'Agregado con Exito'
         });
     })
 })
@@ -138,7 +139,7 @@ app.post('/productos', fileUpload2, (req, res) => {
     const precio3 = req.body.Precio3
     const img = fs.readFileSync(path.join(__dirname, '/imagenes/' + req.file.filename))
     const sql = "INSERT INTO productos(nombre,descripcion,img,preciob,precio,precio2,precio3,marca) VALUES (?,?,?,?,?,?,?,?)"
-    db.query(sql, [nombre, descripcion, img,preciob,precio,precio2,precio3,marca], (err, data) => {
+    db.query(sql, [nombre, descripcion, img, preciob, precio, precio2, precio3, marca], (err, data) => {
         if (err) {
             console.log(err);
             return err;
@@ -160,7 +161,7 @@ app.post('/productos', fileUpload2, (req, res) => {
         console.log('ACTUALIZADO')
     })
 
-    
+
 })
 
 
@@ -171,15 +172,16 @@ app.get('/usuarios', (req, res) => {
         if (err) {
             return err;
         }
-        io.emit("mensaje", "Nueva Pedido")
-        res.json( data );
+        // io.emit("mensaje", "Nueva Pedido")
+        console.log('hola')
+        res.json(data);
     })
 
 });
 app.put('/usuarios', (req, res) => {
     const values = Object.values(req.body)
-// console.log(values)
-    db.query("UPDATE usuarios2 SET aprobado = ? WHERE id = ?",values, (err, data) => {
+    // console.log(values)
+    db.query("UPDATE usuarios2 SET aprobado = ? WHERE id = ?", values, (err, data) => {
         if (err) {
             return err;
         }
@@ -189,23 +191,26 @@ app.put('/usuarios', (req, res) => {
 
 });
 
-app.post('/usuarios', async(req, res) => {
+app.post('/usuarios', async (req, res) => {
     console.log(req.body);
-    const values = Object.values(req.body)
+    let values = Object.values(req.body)
     const tipo = req.body.tipouser
-    const pass = req.body.rif
-    const saltRounds = 10;
-    let passHash = await bcrypt.hash(pass, saltRounds);
+
+    console.log(values)
     var sql;
     switch (tipo) {
         case 1:
-             sql = "INSERT INTO usuarios2 (nombre,email,tlf,direccion,cuandrante,rif,tipouser,user,pass) VALUES (?,?,?,?,?,?,?,?,"+passHash+")";
+            const pass = req.body.rif
+            const saltRounds = 10;
+            let passHash = await bcrypt.hash(pass, saltRounds);
+            values.push(passHash)
+            sql = "INSERT INTO usuarios2 (nombre,email,tlf,direccion,cuandrante,rif,tipouser,user,pass) VALUES (?,?,?,?,?,?,?,?,?)";
             break;
         case 2:
             sql = "INSERT INTO usuarios2 (nombre,tlf,email,user,pass,direccion,tipouser) VALUES (?,?,?,?,?,?,?)";
             break;
         case 3:
-             sql = "INSERT INTO usuarios2 (nombre,email,tlf,tn,direccion,cuandrante) VALUES (?,?,?,?,?,?)";
+            sql = "INSERT INTO usuarios2 (nombre,email,tlf,tn,direccion,cuandrante) VALUES (?,?,?,?,?,?)";
             break;
         default:
             res.json({
@@ -216,14 +221,14 @@ app.post('/usuarios', async(req, res) => {
             return 0;
             break;
     }
-   
+
     db.query(sql, values, (err, data) => {
         if (err) {
 
             res.json({
                 result: 0,
                 mensaje: 'Error al agregar',
-                error:err
+                error: err
             });
 
             return err;
@@ -234,19 +239,19 @@ app.post('/usuarios', async(req, res) => {
             mensaje: 'Agregado con Exito',
             insertId: data.insertId
         });
-        
+
     })
 })
 
 app.post('/image', fileUpload, (req, res) => {
     console.log(req.body.idInsert);
     const id = req.body.idInsert
-    const imagen =  fs.readFileSync(path.join(__dirname, '/imagenes/'+req.file.filename))
+    const imagen = fs.readFileSync(path.join(__dirname, '/imagenes/' + req.file.filename))
     const sql = "UPDATE usuarios SET imagen = ? WHERE id = ? ";
     db.query(sql, [imagen, id], (err, data) => {
         if (err) {
-           console.log(err);
-           return err;
+            console.log(err);
+            return err;
         }
         res.json({
             result: 1,
@@ -262,16 +267,16 @@ app.get('/usuarios/:id', (req, res) => {
     const sql = "SELECT * FROM usuario_detail  WHERE id = ?"
     db.query(sql, [ID], (err, data) => {
         if (err) {
-           
+
             return err;
         }
 
         // fs.writeFileSync(path.join(__dirname, '/dbimages/'+ID+'planetadulce.png'), data[0].imagen)
-        
 
-       res.json({
-           data
-    });
+
+        res.json({
+            data
+        });
     })
 
 })
@@ -304,7 +309,7 @@ app.get('/tiponegocios/', (req, res) => {
         res.json(data);
     })
 
-    
+
 });
 app.get('/marcas/', (req, res) => {
 
@@ -313,11 +318,11 @@ app.get('/marcas/', (req, res) => {
             return err;
         }
         data.map(img => {
-           
+
             fs.writeFileSync(path.join(__dirname, '/imgprod/' + img.id + 'marcas-planetadulce.png'), img.img)
             // data.push(...{ imagen: img.id + 'prod-planetadulce.png'});
         })
-        res.json({marcas:data});
+        res.json({ marcas: data });
     })
 
 
@@ -330,7 +335,7 @@ app.get('/marcas/:id', (req, res) => {
         if (err) {
             return err;
         }
-        
+
         res.json({ productos: data });
     })
 
@@ -359,7 +364,7 @@ app.get('/almacenes/', (req, res) => {
 
 });
 app.post('/almacenes/', (req, res) => {
-   
+
     const values = Object.values(req.body)
     const sql = "INSERT INTO almacenes (nombre,descripcion) VALUES (?,?)";
     db.query(sql, values, (err, data) => {
@@ -403,17 +408,17 @@ app.post('/almacen/:id', (req, res) => {
         if (err) {
             return err;
         }
-if (data != NULL) {
-    const sql = "SELECT * FROM vista_stockalmacen WHERE id_almacen = ?"
-    db.query(sql, [ID], (err, data) => {
-        if (err) {
-            return err;
+        if (data != NULL) {
+            const sql = "SELECT * FROM vista_stockalmacen WHERE id_almacen = ?"
+            db.query(sql, [ID], (err, data) => {
+                if (err) {
+                    return err;
+                }
+
+
+                res.json({ almacen: data });
+            })
         }
-
-
-        res.json({ almacen: data });
-    })
-}
     })
 
 })
@@ -425,8 +430,8 @@ app.get('/SelectProductos/', (req, res) => {
             return err;
         }
 
-        res.json({data});
-       
+        res.json({ data });
+
     })
 
 });
@@ -437,13 +442,13 @@ app.get('/numlote/', (req, res) => {
             res.json(err);
         }
         // console.log(data)
-        if (data.length === 0){
-            res.json({ numlote: 1});
-        }else{
-            
-            res.json({ numlote: data[0]['numlote']});
+        if (data.length === 0) {
+            res.json({ numlote: 1 });
+        } else {
+
+            res.json({ numlote: data[0]['numlote'] });
         }
-    
+
     })
 
 });
@@ -475,7 +480,7 @@ app.post('/stock/', async (req, res) => {
     const stock = parseInt(values[1])
     const id_almacen = parseInt(values[3])
 
-  
+
     const sql = "INSERT INTO registrocargas (producto,cantidad,fecha,almacen,lote,usuario) VALUES (?,?,?,?,?,?)";
     db.query(sql, values, (err, data) => {
         if (err) {
@@ -487,51 +492,51 @@ app.post('/stock/', async (req, res) => {
         }
     })
 
- 
-    const sql1 = "SELECT *  FROM stockalmacen WHERE id_producto =  ?  and id_almacen = ? ";
-    const result =  await db.query(sql1, [id_producto, id_almacen], (err, data) => {
-            if (err) {
-                res.json({
-                    result: 0,
-                    mensaje: 'Error al agregar',
-                    error: err
-                });
-            }
-            if(data.length > 0){
-        const sql3 = "UPDATE stockalmacen SET stock = stock + ? WHERE id_producto =  ?  and id_almacen = ?  ";
-                db.query(sql3, [stock, id_producto, id_almacen], (err, data) => {
-            if (err) {
-                res.json({
-                    result: 0,
-                    mensaje: 'Error al agregar',
-                    error: err
-                });
-            }
-            res.json({
-                result: 1,
-                mensaje: 'Agregado con Exito',
-                insertId: data.insertId
-            });
 
-        })
-            }else{
-         const sql4 = "INSERT INTO stockalmacen (id_producto,stock,id_almacen) VALUES (?,?,?) ";
-        db.query(sql4,[id_producto, stock,id_almacen], (err, data) => {
-            if (err) {
-                res.json({
-                    result: 0,
-                    mensaje: 'Error al agregar',
-                    error: err
-                });
-            }
+    const sql1 = "SELECT *  FROM stockalmacen WHERE id_producto =  ?  and id_almacen = ? ";
+    const result = await db.query(sql1, [id_producto, id_almacen], (err, data) => {
+        if (err) {
             res.json({
-                result: 1,
-                mensaje: 'Agregado con Exito',
-                insertId: data.insertId
+                result: 0,
+                mensaje: 'Error al agregar',
+                error: err
             });
-        })
-            }
-        })
+        }
+        if (data.length > 0) {
+            const sql3 = "UPDATE stockalmacen SET stock = stock + ? WHERE id_producto =  ?  and id_almacen = ?  ";
+            db.query(sql3, [stock, id_producto, id_almacen], (err, data) => {
+                if (err) {
+                    res.json({
+                        result: 0,
+                        mensaje: 'Error al agregar',
+                        error: err
+                    });
+                }
+                res.json({
+                    result: 1,
+                    mensaje: 'Agregado con Exito',
+                    insertId: data.insertId
+                });
+
+            })
+        } else {
+            const sql4 = "INSERT INTO stockalmacen (id_producto,stock,id_almacen) VALUES (?,?,?) ";
+            db.query(sql4, [id_producto, stock, id_almacen], (err, data) => {
+                if (err) {
+                    res.json({
+                        result: 0,
+                        mensaje: 'Error al agregar',
+                        error: err
+                    });
+                }
+                res.json({
+                    result: 1,
+                    mensaje: 'Agregado con Exito',
+                    insertId: data.insertId
+                });
+            })
+        }
+    })
 
 })
 
@@ -542,17 +547,17 @@ app.get('/pedidos/', (req, res) => {
             res.json(err);
         }
         // console.log(data)
-            res.json(data);
-        
+        res.json(data);
+
 
     })
 
 });
 app.get('/detallepedidos/:id', (req, res) => {
-    
+
     const ID = req.params.id;
 
-    db.query(" SELECT * FROM vista_detallep WHERE id_pedido = ?",[ID], (err, data) => {
+    db.query(" SELECT * FROM vista_detallep WHERE id_pedido = ?", [ID], (err, data) => {
         if (err) {
             res.json(err);
         }
@@ -565,7 +570,7 @@ app.get('/detallepedidos/:id', (req, res) => {
 });
 
 app.put('/pedidos', (req, res) => {
-   
+
     // console.log(Object.values(req.body));
     const values = Object.values(req.body)
 
@@ -584,9 +589,23 @@ app.put('/pedidos', (req, res) => {
 
 })
 
+app.get('/SelectDelivery', (req, res) => {
+
+
+    db.query(" SELECT id as value,nombre as label FROM usuarios2 WHERE tipouser = 2", (err, data) => {
+        if (err) {
+            res.json(err);
+        }
+        // console.log(data)
+        res.json({ data });
+
+
+    })
+
+});
 
 app.use('/', require('./app/routes/router'))
 
 
-io.listen(9001)
+// io.listen(9001)
 app.listen(PORT)
