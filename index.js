@@ -185,10 +185,15 @@ app.put('/usuarios', (req, res) => {
         if (err) {
             return err;
         }
-
-        res.json(data);
+        db.query('SELECT * FROM usuarios2 WHERE id = ?', values[1], async (err, results) => {
+            const usuarios = results[0];
+            res.status(200).json({
+                usuarios
+            })
+            console.log(`user${usuarios.id}`,'act');
+            // io.to(`user${usuarios.id}`).emit("actualizarUser", usuarios);
+        })
     })
-
 });
 
 app.post('/usuarios', async (req, res) => {

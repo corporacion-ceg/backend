@@ -48,12 +48,34 @@ exports.nuevoPedido = async (req, res) => {
                         res.status(200).json({
                             msg: 'Pedido creado con exito'
                         });
-                    io.emit("mensaje", "Prueba de conexion")
                 });
 
             });
         console.log(req.body);
 
+    } catch (error) {
+        res.status(500).send('Error al insertan usuario');
+    }
+}
+
+exports.actStatusPedido = async (req, res) => {
+
+    try {
+        const id_pedido = req.body.id_pedido
+
+
+        conexion.query(`UPDATE pedidos SET estatus = 3 WHERE  id_pedido =${id_pedido}`, 
+            (err, results) => {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send('Error al insertan usuario');
+                }
+
+                res.status(200).json({
+                    msg: 'Entrega Finalizada'
+                });
+            });
+        console.log(req.body);
     } catch (error) {
         res.status(500).send('Error al insertan usuario');
     }
