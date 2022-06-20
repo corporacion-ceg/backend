@@ -1,0 +1,9 @@
+DROP VIEW usuario_detail;
+
+CREATE VIEW usuario_detail as select `pedidos`.`id_pedido` AS `id_pedido`,`usuarios2`.`id` AS `id`, `usuarios2`.`nombre` AS `nombre`,`usuarios2`.`email` AS `email`,`usuarios2`.`tlf` AS `tlf`, `usuarios2`.`direccion` AS `direccion`,`rangos`.`rango` AS `rango`,`estatus`.`estatus` AS `estatus`, if((`usuarios2`.`aprobado` = 1),'ACTIVO','DESACTIVADO') AS `aprobado`, date_format(`pedidos`.`fecha_creacion`,'%d-%m-%Y %H:%I:%S') AS `fecha_pedido`, `pedidos`.`monto` AS `monto`, (select count(0) from `pedidos` where (`pedidos`.`id_user` = `usuarios2`.`id`)) AS `total`,`usuarios2`.`latitud` as `latitud`,`usuarios2`.`longitud` as `longitud`,`usuarios2`.`rif` as `rif`,usuarios2.tipouser as tipouser,tiposusuario.nombre as tiposusuarios,rangos.id_rango as id_rango,usuarios2.aprobado as aprob
+from (((`usuarios2` join `rangos` on((`usuarios2`.`rango` = `rangos`.`id_rango`))) 
+left join `pedidos` on((`usuarios2`.`id` = `pedidos`.`id_user`))) 
+left join `estatus` on((`pedidos`.`estatus` = `estatus`.`id_estatus`)))
+left join `tiposusuario` on((`usuarios2`.`tipouser` = `tiposusuario`.`id_tu`));
+
+select `planetadulce`.`usuarios2`.`id` AS `id`,`planetadulce`.`usuarios2`.`nombre` AS `nombre`,`planetadulce`.`usuarios2`.`email` AS `email`,`planetadulce`.`usuarios2`.`tlf` AS `tlf`,`planetadulce`.`usuarios2`.`aprobado` AS `aprobado`,`planetadulce`.`tiposusuario`.`nombre` AS`tipouser`,`planetadulce`.`tiposusuario`.`id_tu` AS `tipouserId` from (`planetadulce`.`usuarios2` join `planetadulce`.`tiposusuario` on(`planetadulce`.`tiposusuario`.`id_tu` = `planetadulce`.`usuarios2`.`tipouser`))

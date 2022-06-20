@@ -168,12 +168,12 @@ app.post('/productos', fileUpload2, (req, res) => {
 // USUARIOS
 app.get('/usuarios', (req, res) => {
 
-    db.query("SELECT * FROM usuarios2", (err, data) => {
+    db.query("SELECT * FROM UsuariosList WHERE tipouserId = 1 OR  tipouserId = 2   ", (err, data) => {
         if (err) {
             return err;
         }
         // io.emit("mensaje", "Nueva Pedido")
-        console.log('hola')
+        console.log(data)
         res.json(data);
     })
 
@@ -609,6 +609,66 @@ app.get('/SelectDelivery', (req, res) => {
 
 });
 
+app.get('/tipoUsuario', (req, res) => {
+
+    db.query(" SELECT * FROM tiposusuario", (err, data) => {
+        if (err) {
+            res.json(err);
+        }
+        // console.log(data)
+        res.json({ data });
+
+
+    })
+
+});
+app.get('/RangoUsuario', (req, res) => {
+
+    db.query(" SELECT * FROM rangos", (err, data) => {
+        if (err) {
+            res.json(err);
+        }
+        // console.log(data)
+        res.json({ data });
+
+
+    })
+
+});
+app.put('/editUsuario/:id', (req, res) => {
+    // console.log(req.params.id);
+    const id = req.params.id;
+    const values = Object.values(req.body)
+    values.push(id)
+    const sql = "UPDATE usuarios2 SET nombre = ?,rif = ?,email=?,tlf=?,direccion = ? WHERE id = ?"
+    console.log(values)
+    db.query(sql, values, (err, data) => {
+        if (err) {
+            return err;
+        }
+        res.json({
+            data
+        });
+    })
+
+})
+app.put('/editCUsuario/:id', (req, res) => {
+    // console.log(req.params.id);
+    const id = req.params.id;
+    const values = Object.values(req.body)
+    values.push(id)
+    const sql = "UPDATE usuarios2 SET tipouser = ?,rango = ?,aprobado=? WHERE id = ?"
+    console.log(values)
+    db.query(sql, values, (err, data) => {
+        if (err) {
+            return err;
+        }
+        res.json({
+            data
+        });
+    })
+
+})
 app.use('/', require('./app/routes/router'))
 
 
