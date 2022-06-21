@@ -14,7 +14,7 @@ exports.nuevoPedido = async (req, res) => {
         const numref = req.body.numref
         const banco  = req.body.banco
 
-        conexion.query('INSERT INTO pedidos SET ?', { id_user: iduser, monto: monto, num_ref: numref,banco:banco },
+        conexion.query('INSERT INTO pedidos SET ?', { id_user: iduser, monto: monto, num_ref: numref,banco:banco, id_delivery : 2 },
             (err, results) => {
                 if (err) {
                     console.log(err);

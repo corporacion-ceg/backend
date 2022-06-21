@@ -67,8 +67,9 @@ const login = async(req, res = response) => {
 }
 
 const register = async (req, res) => {
-
+        
     try {
+      
         const name = req.body.name;
         const user = req.body.user;
         const pass = req.body.pass;
@@ -79,60 +80,46 @@ const register = async (req, res) => {
         const latitud = req.body.latitud;
         const longitud = req.body.longitud;
         let passHash = await bcrypt.hash(pass, 10);
-
-        console.log(name, user, pass, passHash, latitud,longitud );
-
-        var usuario;
-
-        conexion.query(`SELECT * FROM usuarios2 where user = "${user}"`, (err, results) => {
+        const rif = req.body.rif;
+        
+     conexion.query(`SELECT * FROM usuarios2 where user = "${user}"`, (err, results) => {
 
             if (results[0]) {
-                
                 res.status(200).json({
                     msg: 'Ese usuario ya existe'
                   });
-            } else {
-                conexion.query('INSERT INTO usuarios2 SET ?', { nombre: name, email: email, direccion: direccion, tlf: tlf, cuandrante: 1, pass: passHash, codigo_aprobacion: codigo, user: user, aprobado: 0, tipouser: 1, longitud, latitud },
+
+             } else {
+                conexion.query(`INSERT INTO usuarios2 (nombre, email , direccion , tlf , cuandrante , pass, codigo_aprobacion, user,  aprobado , tipouser , longitud , latitud, rif ) VALUE  ("${name}" , "${email}", "${direccion}", "${tlf}", 1, "${passHash}", "${codigo}", "${user}", 0, 1, "${longitud}", "${latitud}", "${rif}")`,
                 (err, results) =>   {
-                       if (err) {
-                           console.log(err);
-                           res.status(500).send('Error al insertan usuario');
-                       }
+                      if (err) {
+                          console.log(err);
+                          res.status(400).send(err);
+                      }
        
-                       conexion.query('SELECT * FROM usuarios2 where id = last_insert_id()', async (err, results) => {
-                           if (err) {
-                               console.log(err)
-                           }
+                      conexion.query(`SELECT * FROM usuarios2 where id = ${results.insertId}`, async (err, results) => {
+                          if (err) {
+                              console.log(err)
+                          }
                          usuario = results[0];
-                       console.log(results[0])
+                      console.log(results[0])
                          // Generar el JWT
                           const token = await generarJWT(results[0].id);
          
                          res.status(200).json({
-                           usuarios: usuario,
+                          usuarios: usuario,
                               token
                          });
-                       });
-                   
-                    
-                   });
+                      });
+                  });
             }
-
-
-
        })
-
-
-
+                  
        
     } catch (error) {
         console.log(error);
     }
-
-
-
-
-
+   
 }
 
 const direccionLocal = async (req, res) => {
@@ -198,6 +185,26 @@ const queryDireccionLocal = async (req, res) => {
     }
 }
 
+const queryDatosUser = async (req, res) => {
+    try {
+        const iduser = req.body.iduser;
+     
+                conexion.query(`SELECT * FROM usuarios2 where id = ${iduser}`, async (err, results) => {
+                    if (err) {
+                        console.log(err)
+                    }
+                  usuario = results[0];
+                  // Generar el JWT
+                  res.status(200).json({
+                       usuarios: usuario,
+                  })
+                });
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 const validarTokenUsuario = async (req, res = response ) => {
     // Generar el JWT
      const token = await generarJWT( req.usuario.id );
@@ -217,6 +224,7 @@ module.exports = {
     validarTokenUsuario,
     register,
     direccionLocal,
-    queryDireccionLocal
+    queryDireccionLocal,
+    queryDatosUser
     
 }

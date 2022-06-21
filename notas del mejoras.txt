@@ -1,8 +1,13 @@
 MOVIL
 
 
+mentaje, no olvide registrar en su local
 
-direccion actual del usuario.
+abrir imagen completa al dar click en productos
+mejorar imagenes
+pago confirmado, en proceso
+anular pedido
+
 chat 
 logeo con huellas
 
@@ -16,6 +21,7 @@ chquear funcionalidad del boton pagar  -- LISTO
 validar usuario existente --> LISTO
 detalle de pedido -- LISTO
 estatus de pedido al cliente en ordenes -- LISTO
+direccion actual del usuario. ---- LISTO
 
 chequear mensaje error login -------?
 Validar login al pagar --------?

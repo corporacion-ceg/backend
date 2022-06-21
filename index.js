@@ -12,7 +12,7 @@ const bcrypt = require('bcrypt')
 var server = require('http').Server(express);
 var io = require('socket.io')(server, {
     cors: {
-        origin: "http://192.168.1.93:9000",
+        origin: "https://tuplanetadulce.com",
 
     },
 });
