@@ -112,21 +112,61 @@ app.delete('/productos/:id', (req, res) => {
     })
 
 })
-app.put('/productos', (req, res) => {
-    console.log(Object.values(req.body));
-    const values = Object.values(req.body)
-    const sql = "UPDATE productos SET nombre = ?,precio = ?,marca = ? WHERE id = ? ";
-    db.query(sql, values, (err, data) => {
-        if (err) {
-            res.json({
-                mensaje: err
-            });
-        }
+app.put('/productos', fileUpload2, (req, res) => {
+    const id = req.body.id
+    const nombre = req.body.nombre
+    const descripcion = req.body.descripcion
+    const marca = req.body.Marca
+    const preciob = req.body.PrecioB
+    const precio = req.body.Precio
+    const precio2 = req.body.Precio2
+    const precio3 = req.body.Precio3
+    if(req.file){
 
+        const img = fs.readFileSync(path.join(__dirname, '/imagenes/' + req.file.filename))
+        const sql = "UPDATE productos SET nombre=?,descripcion = ?,marca = ?, preciob=?,precio = ?,precio2=?,precio3=?,img=? WHERE id = ?"
+        db.query(sql, [nombre, descripcion,marca, preciob, precio, precio2, precio3, img,id], (err, data) => {
+        if (err) {
+            console.log(err);
+            return err;
+        }
         res.json({
-            mensaje: 'Agregado con Exito'
+            result: 1,
+            mensaje: 'Actualizado'
         });
     })
+        db.query(" SELECT * FROM vista_productos ", (err, data) => {
+        if (err) {
+            return err;
+        }
+        data.map(img => {
+            fs.writeFileSync(path.join(__dirname, '/imgprod/' + img.id + 'prod-planetadulce.png'), img.img)
+        })
+
+        console.log('ACTUALIZADO')
+    })
+
+
+    }else{
+        const sql = "UPDATE productos SET nombre=?,descripcion = ?,marca = ?, preciob=?,precio = ?,precio2=?,precio3=? WHERE id = ?"
+        db.query(sql, [nombre, descripcion, marca,preciob, precio, precio2, precio3,id], (err, data) => {
+        if (err) {
+            console.log(err);
+            return err;
+        }
+        res.json({
+            result: 1,
+            mensaje: 'Actualizado'
+        });
+    })
+    }
+   
+  
+
+
+
+
+
 })
 
 app.post('/productos', fileUpload2, (req, res) => {
