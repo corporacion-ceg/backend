@@ -135,7 +135,7 @@ app.put('/productos', fileUpload2, (req, res) => {
             mensaje: 'Actualizado'
         });
     })
-        db.query(" SELECT * FROM vista_productos ", (err, data) => {
+        db.query(" SELECT * FROM cargarimagenes ", (err, data) => {
         if (err) {
             return err;
         }
@@ -190,7 +190,7 @@ app.post('/productos', fileUpload2, (req, res) => {
         });
     })
 
-    db.query(" SELECT * FROM vista_productos ", (err, data) => {
+    db.query(" SELECT * FROM cargarimagenes ", (err, data) => {
         if (err) {
             return err;
         }
@@ -613,13 +613,61 @@ app.get('/detallepedidos/:id', (req, res) => {
     })
 
 });
+app.get('/pagos/', (req, res) => {
 
+    const ID = req.params.id;
+
+    db.query(" SELECT * FROM vista_pedidos WHERE id_estatus != 5", [ID], (err, data) => {
+        if (err) {
+            res.json(err);
+        }
+        // console.log(data)
+        res.json(data);
+
+
+    })
+
+});
+app.get('/palmacen/', (req, res) => {
+
+    const ID = req.params.id;
+
+    db.query(" SELECT * FROM vista_pedidos WHERE id_estatus != 5 and id_estatus != 1", [ID], (err, data) => {
+        if (err) {
+            res.json(err);
+        }
+        // console.log(data)
+        res.json(data);
+
+
+    })
+
+});
 app.put('/pedidos', (req, res) => {
 
     // console.log(Object.values(req.body));
     const values = Object.values(req.body)
 
     const sql = "UPDATE pedidos SET estatus = ?  WHERE id_pedido = ? ";
+    db.query(sql, values, (err, data) => {
+        if (err) {
+            res.json({
+                mensaje: err
+            });
+        }
+        res.json({
+            mensaje: 'cambiado con Exito'
+        });
+    })
+
+
+})
+app.put('/pedidosA', (req, res) => {
+
+    // console.log(Object.values(req.body));
+    const values = Object.values(req.body)
+
+    const sql = "UPDATE pedidos SET estatus = ?,id_delivery = ? WHERE id_pedido = ? ";
     db.query(sql, values, (err, data) => {
         if (err) {
             res.json({
