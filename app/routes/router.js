@@ -22,6 +22,9 @@ router.post('/login', authController.login);
 
 router.post('/direccionLocal' ,  authController.direccionLocal )
 
+
+router.post('/datosUser' ,  authController.queryDatosUser )
+
 //validar token usuario
 router.get('/tokenValidate',[
     validarJWT

@@ -9,14 +9,13 @@ const path = require('path');
 const fs = require('fs');
 const app = express();
 const bcrypt = require('bcrypt')
+
 // var server = require('http').Server(express);
 // var io = require('socket.io')(server, {
 //     cors: {
 //         origin: "https://central.tuplanetadulce.com",
 //         methods: ["GET", "POST"],
 
-//     },
-// });
 
 
 
