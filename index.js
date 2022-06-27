@@ -81,7 +81,7 @@ app.get('/productos', (req, res) => {
 
 });
 app.get('/productos/:id', (req, res) => {
-    console.log(req.params.id);
+    // console.log(req.params.id);
     const ID = req.params.id;
     const sql = "SELECT * FROM vista_productos WHERE id = ?"
     db.query(sql, [ID], (err, data) => {
@@ -96,7 +96,7 @@ app.get('/productos/:id', (req, res) => {
 
 })
 app.delete('/productos/:id', (req, res) => {
-    console.log(req.params.id);
+    // console.log(req.params.id);
     const ID = req.params.id;
     const sql = "DELETE FROM productos WHERE id = ?"
     db.query(sql, [ID], (err, result) => {
@@ -142,7 +142,7 @@ app.put('/productos', fileUpload2, (req, res) => {
             fs.writeFileSync(path.join(__dirname, '/imgprod/' + img.id + 'prod-planetadulce.png'), img.img)
         })
 
-        console.log('ACTUALIZADO')
+        // console.log('ACTUALIZADO')
     })
 
 
@@ -197,7 +197,7 @@ app.post('/productos', fileUpload2, (req, res) => {
             fs.writeFileSync(path.join(__dirname, '/imgprod/' + img.id + 'prod-planetadulce.png'), img.img)
         })
 
-        console.log('ACTUALIZADO')
+        // console.log('ACTUALIZADO')
     })
 
 
@@ -212,7 +212,7 @@ app.get('/usuarios', (req, res) => {
             return err;
         }
         // io.emit("mensaje", "Nueva Pedido")
-        console.log(data)
+        // console.log(data)
         res.json(data);
     })
 
@@ -229,18 +229,18 @@ app.put('/usuarios', (req, res) => {
             res.status(200).json({
                 usuarios
             })
-            console.log(`user${usuarios.id}`,'act');
+            // console.log(`user${usuarios.id}`,'act');
             // io.to(`user${usuarios.id}`).emit("actualizarUser", usuarios);
         })
     })
 });
 
 app.post('/usuarios', async (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     let values = Object.values(req.body)
     const tipo = req.body.tipouser
 
-    console.log(values)
+    // console.log(values)
     var sql;
     switch (tipo) {
         case 1:
@@ -288,7 +288,7 @@ app.post('/usuarios', async (req, res) => {
 })
 
 app.post('/image', fileUpload, (req, res) => {
-    console.log(req.body.idInsert);
+    // console.log(req.body.idInsert);
     const id = req.body.idInsert
     const imagen = fs.readFileSync(path.join(__dirname, '/imagenes/' + req.file.filename))
     const sql = "UPDATE usuarios SET imagen = ? WHERE id = ? ";
@@ -326,7 +326,7 @@ app.get('/usuarios/:id', (req, res) => {
 })
 
 app.delete('/usuarios/:id', (req, res) => {
-    console.log(req.params.id);
+    // console.log(req.params.id);
     const ID = req.params.id;
     const sql = "DELETE FROM usuarios WHERE id = ?"
     db.query(sql, [ID], (err, result) => {
@@ -372,7 +372,7 @@ app.get('/marcas/', (req, res) => {
 
 });
 app.get('/marcas/:id', (req, res) => {
-    console.log(req.params.id);
+    // console.log(req.params.id);
     const ID = req.params.id;
     const sql = "SELECT * FROM vista_productosm WHERE marcaid = ?"
     db.query(sql, [ID], (err, data) => {
@@ -431,7 +431,7 @@ app.post('/almacenes/', (req, res) => {
 
 });
 app.get('/almacenes/:id', (req, res) => {
-    console.log(req.params.id);
+    // console.log(req.params.id);
     const ID = req.params.id;
     const sql = "SELECT * FROM vista_stockalmacen WHERE id_almacen = ?"
     db.query(sql, [ID], (err, data) => {
@@ -440,7 +440,7 @@ app.get('/almacenes/:id', (req, res) => {
             return err;
         }
 
-        console.log(data)
+        // console.log(data)
         res.json({ almacen: data });
     })
 
@@ -498,7 +498,7 @@ app.get('/numlote/', (req, res) => {
 });
 app.post('/numlote/', (req, res) => {
     const values = Object.values(req.body)
-    console.log(values)
+    // console.log(values)
     const sql = "INSERT INTO lotes (almacen,fecha,usuario) VALUES (?,?,?)";
     db.query(sql, values, (err, data) => {
         if (err) {
