@@ -1,4 +1,3 @@
-
 require('dotenv').config({ path: 'env/.env' });
 var cookieParser = require('cookie-parser')
 const db = require("./config/conexion");
@@ -81,7 +80,7 @@ app.get('/productos', (req, res) => {
 
 });
 app.get('/productos/:id', (req, res) => {
-    // console.log(req.params.id);
+    console.log(req.params.id);
     const ID = req.params.id;
     const sql = "SELECT * FROM vista_productos WHERE id = ?"
     db.query(sql, [ID], (err, data) => {
@@ -96,7 +95,7 @@ app.get('/productos/:id', (req, res) => {
 
 })
 app.delete('/productos/:id', (req, res) => {
-    // console.log(req.params.id);
+    console.log(req.params.id);
     const ID = req.params.id;
     const sql = "DELETE FROM productos WHERE id = ?"
     db.query(sql, [ID], (err, result) => {
@@ -142,7 +141,7 @@ app.put('/productos', fileUpload2, (req, res) => {
             fs.writeFileSync(path.join(__dirname, '/imgprod/' + img.id + 'prod-planetadulce.png'), img.img)
         })
 
-        // console.log('ACTUALIZADO')
+        console.log('ACTUALIZADO')
     })
 
 
@@ -197,7 +196,7 @@ app.post('/productos', fileUpload2, (req, res) => {
             fs.writeFileSync(path.join(__dirname, '/imgprod/' + img.id + 'prod-planetadulce.png'), img.img)
         })
 
-        // console.log('ACTUALIZADO')
+        console.log('ACTUALIZADO')
     })
 
 
@@ -207,12 +206,13 @@ app.post('/productos', fileUpload2, (req, res) => {
 // USUARIOS
 app.get('/usuarios', (req, res) => {
 
-    db.query("SELECT * FROM UsuariosList WHERE tipouserId = 1 OR  tipouserId = 2   ", (err, data) => {
+    db.query("SELECT * FROM usuarioslist WHERE tipouserId = 1 OR  tipouserId = 2   ", (err, data) => {
         if (err) {
+             res.json(err);
             return err;
         }
         // io.emit("mensaje", "Nueva Pedido")
-        // console.log(data)
+        console.log(data)
         res.json(data);
     })
 
@@ -229,28 +229,33 @@ app.put('/usuarios', (req, res) => {
             res.status(200).json({
                 usuarios
             })
-            // console.log(`user${usuarios.id}`,'act');
+            console.log(`user${usuarios.id}`,'act');
             // io.to(`user${usuarios.id}`).emit("actualizarUser", usuarios);
         })
     })
 });
 
 app.post('/usuarios', async (req, res) => {
-    // console.log(req.body);
+    console.log(req.body);
     let values = Object.values(req.body)
     const tipo = req.body.tipouser
 
-    // console.log(values)
-    var sql;
+    console.log(values)
+    var sql,pass,saltRounds,passHash;
     switch (tipo) {
         case 1:
-            const pass = req.body.rif
-            const saltRounds = 10;
-            let passHash = await bcrypt.hash(pass, saltRounds);
+             pass = req.body.rif
+             saltRounds = 10;
+             passHash = await bcrypt.hash(pass, saltRounds);
             values.push(passHash)
             sql = "INSERT INTO usuarios2 (nombre,email,tlf,direccion,cuandrante,rif,tipouser,user,pass) VALUES (?,?,?,?,?,?,?,?,?)";
             break;
         case 2:
+             pass = req.body.pass
+             saltRounds = 10;
+             passHash = await bcrypt.hash(pass, saltRounds);
+            values[4] = passHash
+            console.log(values)
             sql = "INSERT INTO usuarios2 (nombre,tlf,email,user,pass,direccion,tipouser) VALUES (?,?,?,?,?,?,?)";
             break;
         case 3:
@@ -288,7 +293,7 @@ app.post('/usuarios', async (req, res) => {
 })
 
 app.post('/image', fileUpload, (req, res) => {
-    // console.log(req.body.idInsert);
+    console.log(req.body.idInsert);
     const id = req.body.idInsert
     const imagen = fs.readFileSync(path.join(__dirname, '/imagenes/' + req.file.filename))
     const sql = "UPDATE usuarios SET imagen = ? WHERE id = ? ";
@@ -326,7 +331,7 @@ app.get('/usuarios/:id', (req, res) => {
 })
 
 app.delete('/usuarios/:id', (req, res) => {
-    // console.log(req.params.id);
+    console.log(req.params.id);
     const ID = req.params.id;
     const sql = "DELETE FROM usuarios WHERE id = ?"
     db.query(sql, [ID], (err, result) => {
@@ -372,9 +377,9 @@ app.get('/marcas/', (req, res) => {
 
 });
 app.get('/marcas/:id', (req, res) => {
-    // console.log(req.params.id);
+    console.log(req.params.id);
     const ID = req.params.id;
-    const sql = "SELECT * FROM vista_productosm WHERE marcaid = ?"
+    const sql = "SELECT * FROM vista_productosm INNER JOIN stockalmacen ON stockalmacen.id_producto = vista_productosm.id WHERE marcaid = ?"
     db.query(sql, [ID], (err, data) => {
         if (err) {
             return err;
@@ -431,7 +436,7 @@ app.post('/almacenes/', (req, res) => {
 
 });
 app.get('/almacenes/:id', (req, res) => {
-    // console.log(req.params.id);
+    console.log(req.params.id);
     const ID = req.params.id;
     const sql = "SELECT * FROM vista_stockalmacen WHERE id_almacen = ?"
     db.query(sql, [ID], (err, data) => {
@@ -440,7 +445,7 @@ app.get('/almacenes/:id', (req, res) => {
             return err;
         }
 
-        // console.log(data)
+        console.log(data)
         res.json({ almacen: data });
     })
 
@@ -498,7 +503,7 @@ app.get('/numlote/', (req, res) => {
 });
 app.post('/numlote/', (req, res) => {
     const values = Object.values(req.body)
-    // console.log(values)
+    console.log(values)
     const sql = "INSERT INTO lotes (almacen,fecha,usuario) VALUES (?,?,?)";
     db.query(sql, values, (err, data) => {
         if (err) {
@@ -601,7 +606,7 @@ app.get('/detallepedidos/:id', (req, res) => {
 
     const ID = req.params.id;
 
-    db.query(" SELECT * FROM vista_detallep WHERE id_pedido = ?", [ID], (err, data) => {
+    db.query(" SELECT * FROM vista_detalleP WHERE id_pedido = ?", [ID], (err, data) => {
         if (err) {
             res.json(err);
         }
@@ -696,14 +701,13 @@ app.get('/SelectDelivery', (req, res) => {
 
 });
 
-app.get('/tipoUsuario/:id', (req, res) => {
-    const ID = req.params.id;
-    const query = `call spTiposUsuarios (${ID})`
-    db.query(query, (err, data) => {
+app.get('/tipoUsuario', (req, res) => {
+
+    db.query(" SELECT * FROM tiposusuario", (err, data) => {
         if (err) {
             res.json(err);
         }
-        // console.log(data[0])
+        // console.log(data)
         res.json({ data });
 
 
