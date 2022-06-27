@@ -696,13 +696,14 @@ app.get('/SelectDelivery', (req, res) => {
 
 });
 
-app.get('/tipoUsuario', (req, res) => {
-
-    db.query(" SELECT * FROM tiposusuario", (err, data) => {
+app.get('/tipoUsuario/:id', (req, res) => {
+    const ID = req.params.id;
+    const query = `call spTiposUsuarios (${ID})`
+    db.query(query, (err, data) => {
         if (err) {
             res.json(err);
         }
-        // console.log(data)
+        // console.log(data[0])
         res.json({ data });
 
 
