@@ -207,8 +207,9 @@ app.post('/productos', fileUpload2, (req, res) => {
 // USUARIOS
 app.get('/usuarios', (req, res) => {
 
-    db.query("SELECT * FROM UsuariosList WHERE tipouserId = 1 OR  tipouserId = 2   ", (err, data) => {
+    db.query("SELECT * FROM usuarioslist WHERE tipouserId = 1 OR  tipouserId = 2   ", (err, data) => {
         if (err) {
+             res.json(err);
             return err;
         }
         // io.emit("mensaje", "Nueva Pedido")
@@ -241,16 +242,21 @@ app.post('/usuarios', async (req, res) => {
     const tipo = req.body.tipouser
 
     console.log(values)
-    var sql;
+    var sql,pass,saltRounds,passHash;
     switch (tipo) {
         case 1:
-            const pass = req.body.rif
-            const saltRounds = 10;
-            let passHash = await bcrypt.hash(pass, saltRounds);
+             pass = req.body.rif
+             saltRounds = 10;
+             passHash = await bcrypt.hash(pass, saltRounds);
             values.push(passHash)
             sql = "INSERT INTO usuarios2 (nombre,email,tlf,direccion,cuandrante,rif,tipouser,user,pass) VALUES (?,?,?,?,?,?,?,?,?)";
             break;
         case 2:
+             pass = req.body.pass
+             saltRounds = 10;
+             passHash = await bcrypt.hash(pass, saltRounds);
+            values[4] = passHash
+            console.log(values)
             sql = "INSERT INTO usuarios2 (nombre,tlf,email,user,pass,direccion,tipouser) VALUES (?,?,?,?,?,?,?)";
             break;
         case 3:
@@ -374,7 +380,7 @@ app.get('/marcas/', (req, res) => {
 app.get('/marcas/:id', (req, res) => {
     console.log(req.params.id);
     const ID = req.params.id;
-    const sql = "SELECT * FROM vista_productosm WHERE marcaid = ?"
+    const sql = "SELECT * FROM vista_productosm INNER JOIN stockalmacen ON stockalmacen.id_producto = vista_productosm.id WHERE marcaid = ?"
     db.query(sql, [ID], (err, data) => {
         if (err) {
             return err;
@@ -601,7 +607,7 @@ app.get('/detallepedidos/:id', (req, res) => {
 
     const ID = req.params.id;
 
-    db.query(" SELECT * FROM vista_detallep WHERE id_pedido = ?", [ID], (err, data) => {
+    db.query(" SELECT * FROM vista_detalleP WHERE id_pedido = ?", [ID], (err, data) => {
         if (err) {
             res.json(err);
         }

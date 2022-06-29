@@ -18,7 +18,7 @@ const conexion =  mysql.createConnection({
     host: 'localhost',
     user:'root',
     password:'',
-    database:'planetadulce',
+    database:'tuplanet_planetadulce',
 
 });
 

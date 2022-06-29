@@ -4,7 +4,7 @@ const authController2 = require('../controllers/authController');
 const authController = require('../controllers/auth');
 const { check } = require('express-validator');
 const { validarJWT } = require('../middlewares/validar-jwt');
-const { nuevoPedido, actStatusPedido } = require('../controllers/pedidoController');
+const { nuevoPedido, actStatusPedido, queryStatus, actPedido } = require('../controllers/pedidoController');
 const { queryOrdenes, queryOrdenesDelivery } = require('../controllers/ordenesController');
 const { queryDetalleOrden} = require('../controllers/ordenesController')
 
@@ -46,6 +46,15 @@ router.post('/nuevoPedido', [
 router.post('/actStatusPedido', [
     validarJWT
 ], actStatusPedido)
+
+
+router.get('/queryPedido/:id_user', [
+    validarJWT
+], queryStatus)
+
+router.put('/actPedido', [
+    validarJWT
+], actPedido)
 
 //ordenes
 router.post('/ordenes',  [
