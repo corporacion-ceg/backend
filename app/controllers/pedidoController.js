@@ -109,14 +109,14 @@ exports.actPedido = async (req, res) => {
         const numref = req.body.numref
         const id_pedido = req.body.id_pedido
 
-        conexion.query( `UPDATE pedidos SET num_ref = "${numref}", banco = "${banco}", estatus = 1 WHERE id_pedido ${id_pedido}`, (err, data) => {
+        conexion.query( `UPDATE pedidos SET num_ref = "${numref}", banco = "${banco}", estatus = 2 WHERE id_pedido = ${id_pedido}`, (err, data) => {
             if (err) {
                 console.log(err);
                 res.status(500).send('Error actualizando orden pedido');
             }
 
             res.status(200).json({
-                msg: data[0]
+                msg: data
             });
         })
     } catch (error) {
