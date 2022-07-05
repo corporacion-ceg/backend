@@ -109,7 +109,7 @@ exports.actPedido = async (req, res) => {
         const numref = req.body.numref
         const id_pedido = req.body.id_pedido
 
-        conexion.query( `UPDATE pedidos SET num_ref = "${numref}", banco = "${banco}", estatus = 2 WHERE id_pedido = ${id_pedido}`, (err, data) => {
+        conexion.query( `UPDATE pedidos SET num_ref = "${numref}", banco = "${banco}", estatus = 4  WHERE id_pedido = ${id_pedido}`, (err, data) => {
             if (err) {
                 console.log(err);
                 res.status(500).send('Error actualizando orden pedido');
@@ -122,5 +122,33 @@ exports.actPedido = async (req, res) => {
     } catch (error) {
         console.log(err);
         res.status(500).send('Error actualizando orden pedido');
+    }
+}
+
+exports.reIngresoProductos = async (req, res) => {
+
+    try {
+        const productos = req.body.productos;
+        const id_pedido = req.body.id_pedido;
+
+        conexion.query( `UPDATE pedidos SET estatus = 5 WHERE id_pedido = ${id_pedido}`, (err, data) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send('Error actualizando orden pedido');
+            }
+
+            productos.forEach(producto => {
+                conexion.query(`UPDATE stockalmacen SET stock = (stock + ${producto.cantidad}) WHERE id_producto = ${producto.id} `, (err, result) => {
+                    if (err) return res.status(500).send('Error al insertan usuario');
+                })
+            });
+            res.status(200).json({
+                msg: data
+            });
+        })
+
+        console.log(req.body);
+    } catch (error) {
+        res.status(500).send('Error al insertan usuario');
     }
 }
