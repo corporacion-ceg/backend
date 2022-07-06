@@ -41,7 +41,7 @@ exports.queryOrdenesDelivery = async (req, res) => {
 exports.queryDetalleOrden = async (req, res) => {
 
     const id_pedido = req.body.id_pedido
-    conexion.query("SELECT id_producto_pedido, id_pedido, producto, cantidad, id_producto, preciob, precio, precio2, precio3, marca FROM productospedido  LEFT JOIN productos ON productospedido.id_producto = productos.id where productospedido.id_pedido = " + id_pedido, (err, results) => {
+    conexion.query("SELECT* FROM Vista_detallePM where id_pedido = " + id_pedido, (err, results) => {
 
         if (err) {
             console.log(err);
