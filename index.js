@@ -1,3 +1,4 @@
+
 require('dotenv').config({ path: 'env/.env' });
 var cookieParser = require('cookie-parser')
 const db = require("./config/conexion");
@@ -617,6 +618,7 @@ app.get('/detallepedidos/:id', (req, res) => {
     })
 
 });
+
 app.get('/pagos/', (req, res) => {
 
     const ID = req.params.id;
@@ -701,13 +703,14 @@ app.get('/SelectDelivery', (req, res) => {
 
 });
 
-app.get('/tipoUsuario', (req, res) => {
-
-    db.query(" SELECT * FROM tiposusuario", (err, data) => {
+app.get('/tipoUsuario/:id', (req, res) => {
+    const ID = req.params.id;
+    const query = `call spTiposUsuarios (${ID})`
+    db.query(query, (err, data) => {
         if (err) {
             res.json(err);
         }
-        // console.log(data)
+        // console.log(data[0])
         res.json({ data });
 
 
@@ -765,6 +768,19 @@ app.put('/editCUsuario/:id', (req, res) => {
 app.get('/Dolar', (req, res) => {
 
     db.query("select * from tb_dolar ORDER BY id_dolar desc limit 1", (err, data) => {
+        if (err) {
+            res.json(err);
+        }
+        // console.log(data)
+        res.json({ data });
+
+
+    })
+
+});
+app.get('/TiposNegocios', (req, res) => {
+
+    db.query("select * from tb_tipoNegocio", (err, data) => {
         if (err) {
             res.json(err);
         }
