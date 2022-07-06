@@ -761,6 +761,20 @@ app.put('/editCUsuario/:id', (req, res) => {
     })
 
 })
+
+app.get('/Dolar', (req, res) => {
+
+    db.query("select * from tb_dolar ORDER BY id_dolar desc limit 1", (err, data) => {
+        if (err) {
+            res.json(err);
+        }
+        // console.log(data)
+        res.json({ data });
+
+
+    })
+
+});
 app.use('/', require('./app/routes/router'))
 
 
