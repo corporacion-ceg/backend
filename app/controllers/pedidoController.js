@@ -152,3 +152,24 @@ exports.reIngresoProductos = async (req, res) => {
         res.status(500).send('Error al insertan usuario');
     }
 }
+
+exports.productosPedidoPendiente = async (req, res) => {
+
+    try {
+        const id_pedido = req.params.id_pedido;
+
+        //conexion.query(`SELECT * FROM productospedido WHERE id_pedido = ${id_pedido}`, (err, data) => {
+        conexion.query(`SELECT productospedido.id_producto as id, vista_productos.nombre, productospedido.cantidad, vista_productos.precio, vista_productos.precio2, vista_productos.precio3, vista_stockalmacen.stock, vista_productos.descripcion FROM productospedido LEFT JOIN vista_productos on productospedido.id_producto = vista_productos.id LEFT JOIN vista_stockalmacen on vista_stockalmacen.id_producto = productospedido.id_producto WHERE id_pedido  = ${id_pedido}`, (err, data) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send('Error consultado productos de pedido pendiente');
+            }
+            res.status(200).json({
+                msg: data
+            });
+           
+        })
+    } catch (error) {
+
+    }
+}
