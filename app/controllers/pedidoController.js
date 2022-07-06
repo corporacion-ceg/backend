@@ -38,10 +38,13 @@ exports.nuevoPedido = async (req, res) => {
                             (err, results) => { 
                                 if (err) return  res.status(500).send('Error al insertan usuario');
                                 
-                                // conexion.query('UPDATE stockalmacen SET stock = (stockalmacen - ?) WHERE id_producto', { cantidad, id_producto: id },(err,result) => {
-                                //     if (err) return res.status(500).send('Error al insertan usuario');
+                               conexion.query(`UPDATE stockalmacen SET stock = (stock - ${cantidad}) WHERE id_producto = ${id} `,(err,result) => {
+                                    if (err) return res.status(500).send('Error al insertan usuario');
+                                    res.status(200).json({
+                                        msg: 'Restado de stock exito'
+                                    });
+                                })
 
-                                // })
 
                             })
                         });
@@ -80,3 +83,4 @@ exports.actStatusPedido = async (req, res) => {
         res.status(500).send('Error al insertan usuario');
     }
 }
+
