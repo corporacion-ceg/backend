@@ -17,7 +17,9 @@ router.post('/register', [
     check('email', 'El correo no es válido').isEmail(),
     check('tlf', 'El usuario es obligatorio').not().isEmpty(),
     check('direccion', 'El usuario es obligatorio').not().isEmpty(),
+    check('Tnegocio', 'El usuario es obligatorio').not().isEmpty(),
 ] , authController.register);
+
 router.post('/login', authController.login);
 
 router.post('/direccionLocal' ,  authController.direccionLocal )
