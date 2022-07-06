@@ -81,6 +81,7 @@ const register = async (req, res) => {
         const longitud = req.body.longitud;
         let passHash = await bcrypt.hash(pass, 10);
         const rif = req.body.rif;
+        const Tnegocio = req.body.Tnegocio;
         
      conexion.query(`SELECT * FROM usuarios2 where user = "${user}"`, (err, results) => {
 
@@ -90,7 +91,7 @@ const register = async (req, res) => {
                   });
 
              } else {
-                conexion.query(`INSERT INTO usuarios2 (nombre, email , direccion , tlf , cuandrante , pass, codigo_aprobacion, user,  aprobado , tipouser , longitud , latitud, rif ) VALUE  ("${name}" , "${email}", "${direccion}", "${tlf}", 1, "${passHash}", "${codigo}", "${user}", 0, 1, "${longitud}", "${latitud}", "${rif}")`,
+                conexion.query(`INSERT INTO usuarios2 (nombre, email , direccion , tlf , cuandrante , pass, codigo_aprobacion, user,  aprobado , tipouser , longitud , latitud, rif,tn ) VALUE  ("${name}" , "${email}", "${direccion}", "${tlf}", 1, "${passHash}", "${codigo}", "${user}", 0, 1, "${longitud}", "${latitud}", "${rif}","${Tnegocio}")`,
                 (err, results) =>   {
                       if (err) {
                           console.log(err);
